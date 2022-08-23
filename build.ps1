@@ -10,19 +10,20 @@ Set-Location $rootDir/legocerthub-backend
 Copy-Item -Path $rootDir/legocerthub-backend/config.default.yaml -Destination $outDir
 
 # Windows x64
-set GOARCH=amd64
-set GOOS=windows
+$env:GOARCH = "amd64"
+$env:GOOS = "windows"
 go build -o $outDir/lego-amd64.exe ./cmd/api-server
 
 # Linux x64
-set GOARCH=amd64
-set GOOS=linux
+$env:GOARCH = "amd64"
+$env:GOOS = "linux"
 go build -o $outDir/lego-amd64-linux ./cmd/api-server
 
 ## Frontend
 Set-Location $rootDir/legocerthub-frontend
 npm run build
 
+Remove-Item -Path $outDir/frontend_build -recurse
 Move-Item -Path $rootDir/legocerthub-frontend/build -Destination $outDir/frontend_build
 
 # Return to original path
