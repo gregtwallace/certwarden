@@ -1,0 +1,5 @@
+# shell scripts require LF
+*.sh text eol=lf
+
+# linux service should use LF
+*.service eol=lf
