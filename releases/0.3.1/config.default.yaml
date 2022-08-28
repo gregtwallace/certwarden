@@ -1,0 +1,29 @@
+# Host and Ports for API Server
+# Either http or https will start depending on if valid private_key and
+# certificate names are specified below. Otherwise app is started with http
+# WARNING: You should obtain a valid certificate immediately to avoid loss
+# of data confidentiality.
+# Additionally, key and certificate downloads via the API key will be disabled
+# if the server is running as http.
+hostname: "localhost"
+https_port: 4055
+http_port: 4050
+
+# API Server's key and cert
+# These names should match the 'name' field of the desired key and cert within
+# the application.
+# If not specified (or invalid), a self-signed cert is created on each launch
+# until proper values are specified.
+private_key_name: legocerthub
+certificate_name: legocerthub
+
+# Frontend configuration (if hosting with the backend)
+frontend:
+  enabled: true
+  https_port: 3055
+  http_port: 3050
+
+# Development mode
+# This should NEVER be true in production
+# Disables key SECURITY features!
+dev_mode: false
