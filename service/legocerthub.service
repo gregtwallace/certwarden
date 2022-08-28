@@ -1,0 +1,12 @@
+[Unit]
+Description=LeGo Certhub
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5s
+WorkingDirectory=/opt/legocerthub
+ExecStart=/opt/legocerthub/lego-amd64-linux
+
+[Install]
+WantedBy=multi-user.target
