@@ -3,6 +3,7 @@ Description=LeGo Certhub
 
 [Service]
 Type=simple
+User=legocerthub
 Restart=always
 RestartSec=5s
 WorkingDirectory=/opt/legocerthub
