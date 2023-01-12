@@ -15,13 +15,7 @@ $env:CGO_ENABLED = 1
 # Windows x64
 $env:GOARCH = "amd64"
 $env:GOOS = "windows"
-go build -o $outDir/lego-amd64.exe ./cmd/api-server
-
-# Linux x64
-# Currently unable to cross-compile with CGO_ENABLED
-# $env:GOARCH = "amd64"
-# $env:GOOS = "linux"
-# go build -o $outDir/lego-amd64-linux ./cmd/api-server
+go build -o $outDir/lego-windows-amd64.exe ./cmd/api-server
 
 ## Frontend
 Set-Location $rootDir/legocerthub-frontend
