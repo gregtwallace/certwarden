@@ -1,0 +1,212 @@
+name: Build Releases
+
+on:
+  workflow_dispatch:
+  push:
+    'tags':
+    - 'v*'
+
+env:
+  GITHUB_REF: ${{ github.ref }}
+
+jobs:
+  build-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Frontend Repo
+      uses: actions/checkout@v3
+      with:
+        repository: gregtwallace/legocerthub-frontend
+        ref: ${{ env.GITHUB_REF }}
+        fetch-depth: 0
+
+    - name: Setup Node.js 14
+      uses: actions/setup-node@v3
+      with:
+        node-version: 14.x
+        cache: 'npm'
+
+    # Instead of installing powershell, remove the config directing use of powershell
+    - run: rm ./.npmrc
+  
+    - run: npm ci --legacy-peer-deps
+
+    - run: npm run build
+      env:
+        CI: false
+
+    - name: Archive npm failure logs
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: npm-logs
+        path: ~/.npm/_logs
+
+    - name: Save Compiled React App
+      uses: actions/upload-artifact@v3
+      with:
+        name: frontend_build
+        path: ./build
+
+  build-backend-common:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Backend Repo
+      uses: actions/checkout@v3
+      with:
+        repository: gregtwallace/legocerthub-backend
+        ref: ${{ env.GITHUB_REF }}
+        fetch-depth: 0
+
+    - name: Save Default Config
+      uses: actions/upload-artifact@v3
+      with:
+        name: config.default.yaml
+        path: ./config.default.yaml
+
+    - name: Save Scripts (Linux)
+      uses: actions/upload-artifact@v3
+      with:
+        name: scripts-linux
+        path: ./scripts/linux
+
+    - name: Save Scripts (Windows)
+      uses: actions/upload-artifact@v3
+      with:
+        name: scripts-windows
+        path: ./scripts/windows
+
+  build-backend-linux-amd64:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Backend Repo
+      uses: actions/checkout@v3
+      with:
+        repository: gregtwallace/legocerthub-backend
+        ref: ${{ env.GITHUB_REF }}
+        fetch-depth: 0
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.19
+    
+    - name: Build
+      run: go build -o ./lego-linux-amd64 -v ./cmd/api-server
+      env:
+        GOOS: linux
+        GOARCH: amd64
+        CGO_ENABLED: 1
+  
+    - name: Save Compiled Binary
+      uses: actions/upload-artifact@v3
+      with:
+        name: lego-linux-amd64
+        path: ./lego-linux-amd64
+
+  build-backend-windows-amd64:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout Backend Repo
+      uses: actions/checkout@v3
+      with:
+        repository: gregtwallace/legocerthub-backend
+        ref: ${{ env.GITHUB_REF }}
+        fetch-depth: 0
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.19
+    
+    - name: Build
+      run: go build -o ./lego-windows-amd64.exe -v ./cmd/api-server
+      env:
+        GOOS: windows
+        GOARCH: amd64
+        CGO_ENABLED: 1
+  
+    - name: Save Compiled Binary
+      uses: actions/upload-artifact@v3
+      with:
+        name: lego-windows-amd64
+        path: ./lego-windows-amd64.exe
+
+  release-file-linux-amd64:
+    needs: [build-frontend, build-backend-common, build-backend-linux-amd64]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Make release directory
+      run: mkdir ./release
+
+    - name: Download Frontend
+      uses: actions/download-artifact@v3
+      with:
+        name: frontend_build
+        path: ./release/frontend_build
+
+    - name: Download Backend Default Config
+      uses: actions/download-artifact@v3
+      with:
+        name: config.default.yaml
+        path: ./release
+
+    - name: Download Linux Scripts
+      uses: actions/download-artifact@v3
+      with:
+        name: scripts-linux
+        path: ./release/scripts
+        if_no_artifact_found: ignore
+
+    - name: Download Backend Binary
+      uses: actions/download-artifact@v3
+      with:
+        name: lego-linux-amd64
+        path: ./release
+
+    - name: Save Release
+      uses: actions/upload-artifact@v3
+      with:
+        name: legocerthub_linux_amd64
+        path: ./release
+
+  release-file-windows-amd64:
+    needs: [build-frontend, build-backend-common, build-backend-windows-amd64]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Make release directory
+      run: mkdir ./release
+
+    - name: Download Frontend
+      uses: actions/download-artifact@v3
+      with:
+        name: frontend_build
+        path: ./release/frontend_build
+
+    - name: Download Backend Default Config
+      uses: actions/download-artifact@v3
+      with:
+        name: config.default.yaml
+        path: ./release
+
+    - name: Download Windows Scripts
+      uses: actions/download-artifact@v3
+      with:
+        name: scripts-windows
+        path: ./release/scripts
+        if_no_artifact_found: ignore
+
+    - name: Download Backend Binary
+      uses: actions/download-artifact@v3
+      with:
+        name: lego-windows-amd64
+        path: ./release
+
+    - name: Save Release
+      uses: actions/upload-artifact@v3
+      with:
+        name: legocerthub_windows_amd64
+        path: ./release
