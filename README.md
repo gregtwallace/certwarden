@@ -1,9 +1,13 @@
 # LeGo Certhub
-LeGo Certhub is being designed to function as a centralized management
-solution for Let's Encrypt certificates.
+Centralized Certificate Management
+Conveniently Leverage Let&apos;s Encrypt to Secure Your Infrastructure
 
-This is a personal side project of mine that I plan to use in my home
-production environment once complete.
+## More Information
+https://www.legocerthub.com/
 
-## Building
-This repo contains the build scripts to generate releases
+## Sources
+Backend
+https://github.com/gregtwallace/legocerthub-backend
+
+Frontend
+https://github.com/gregtwallace/legocerthub-frontend
