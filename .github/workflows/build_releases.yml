@@ -158,7 +158,6 @@ jobs:
       with:
         name: scripts-linux
         path: ./release/scripts
-        if_no_artifact_found: ignore
 
     - name: Download Backend Binary
       uses: actions/download-artifact@v3
@@ -197,7 +196,6 @@ jobs:
       with:
         name: scripts-windows
         path: ./release/scripts
-        if_no_artifact_found: ignore
 
     - name: Download Backend Binary
       uses: actions/download-artifact@v3
