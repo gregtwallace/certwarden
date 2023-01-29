@@ -33,6 +33,12 @@ jobs:
           name: LICENSE.md
           path: ./LICENSE.md
 
+      - name: Save CHANGELOG
+        uses: actions/upload-artifact@v3
+        with:
+          name: CHANGELOG.md
+          path: ./CHANGELOG.md
+
   build-frontend:
     runs-on: ubuntu-latest
 
@@ -203,6 +209,12 @@ jobs:
           name: LICENSE.md
           path: ./release
 
+      - name: Download CHANGELOG
+        uses: actions/download-artifact@v3
+        with:
+          name: CHANGELOG.md
+          path: ./release
+
       - name: Save Release
         uses: actions/upload-artifact@v3
         with:
@@ -257,6 +269,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: LICENSE.md
+          path: ./release
+
+      - name: Download CHANGELOG
+        uses: actions/download-artifact@v3
+        with:
+          name: CHANGELOG.md
           path: ./release
 
       - name: Save Release

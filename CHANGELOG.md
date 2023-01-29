@@ -1,0 +1,1 @@
+# LeGo CertHub Changelog
