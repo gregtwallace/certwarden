@@ -1,5 +1,22 @@
 # LeGo CertHub Changelog
 
+## [v0.6.10] - 2023-03-08
+
+### Added
+N/A
+
+### Changed
+- Update Go version and move Node and Go versions to global variables in build script.
+- Rename DNS example scripts to avoid accidental overwrite.
+- Minor code clarification in CORS.
+
+### Fixed
+N/A
+
+### Removed
+N/A
+
+
 ## [v0.6.9] - 2023-01-29
 
 ### Added
