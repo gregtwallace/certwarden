@@ -1,5 +1,23 @@
 # LeGo CertHub Changelog
 
+## [v0.6.11] - 2023-03-12
+
+### Added
+- Added debug log message when dns checker is configured to skip the check.
+
+### Changed
+- Update dependency versions: x/text, x/net, x/time, x/crypto, & go-retryablehttp
+- Abort dns checker sleep when configured to skip and shutdown signal is received.
+
+### Fixed
+- Patched several CVEs by upgrading dependencies, including CVE-2022-32149,
+  CVE-2022-41721, CVE-2022-27664, and CVE-2022-41723.
+- Add missing error check in Cloudflare challenge provider.
+
+### Removed
+N/A
+
+
 ## [v0.6.10] - 2023-03-08
 
 ### Added
