@@ -1,5 +1,48 @@
 # LeGo CertHub Changelog
 
+## [v0.7.0] - 2023-04-29
+
+Major updates were made to the frontend in this release, including removing
+Create React App and replacing it with Vite.
+
+### Added
+Backend
+- Added tests for validation package.
+
+Frontend
+- Defined props with prop-types.
+- Added sublabel on text array component.
+- Added placeholder message on empty InputSelect fields.
+
+### Changed
+Backend
+- Log Cloudflare domains at Info level.
+- Updated email validation regex and method. Domain piece uses domain validator
+  and email username is separately validated.
+- DNS Manual Script name updated.
+
+Frontend
+- Port from Create React App to Vite (CRA is deprecated).
+- Moved constants to a separate file.
+- Updated paths for navigation when using cancel and submit buttons. Next
+  destination is now explicit rather than relative.
+- Login form clears if backend rejects the login.
+
+### Fixed
+Frontend
+- Did a ton of linting.
+- Fixed issue where Axios errors could cause a loop on logout and also cleaned
+  up Axios error handling in general.
+- Fixed issue where Rollover Account Key would still show loading message even
+  after loaded.
+
+### Removed
+Frontend
+- Removed dummy forms.
+- Removed duplicative FormError component and replaced with common ApiError
+  component.
+
+
 ## [v0.6.11] - 2023-03-12
 
 ### Added
