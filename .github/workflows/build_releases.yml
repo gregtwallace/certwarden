@@ -60,7 +60,7 @@ jobs:
 
       - run: npm ci --legacy-peer-deps
 
-      - run: npm run build
+      - run: npx vite build
         env:
           CI: false
 
@@ -75,7 +75,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: frontend_build
-          path: ./build
+          path: ./dist
 
   build-backend-common:
     runs-on: ubuntu-latest
