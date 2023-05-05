@@ -1,5 +1,66 @@
 # LeGo CertHub Changelog
 
+## [v0.8.0] - 2023-05-04
+
+> **Warning**
+> Please read as there are breaking changes requiring manual intervention.
+
+lego-certhub.db, config.yaml, and the log folder need to be manually moved to
+a /data subfolder if coming from a prior release.
+
+You may also need to update your config file:
+- 'bind_address' added to specify what address the server should bind to. The
+  default is blank which binds to all available addresses.
+- 'cors_permitted_origins' should be set if you need cross-origin support.
+
+### Added
+Backend
+- Added 'bind_address' configuration option which defaults to all addresses.
+- Added 'cors_permitted_origins' to define permitted origins for cross-origin
+  requests.
+
+Frontend
+- Added highlighting on active navbar route.
+
+### Changed
+Backend
+- Moved db, config, and log storage to /data subfolder (primarily to make
+  docker mounting easier).
+- Updated cross-origin configuration to better match intent.
+- API URL for hosted frontend is based on config 'hostname'. This should be
+  a dns resolvable fqdn.
+- Updated some log messages regarding server start and bind address.
+- 'hostname' functionality was clarified.
+- Simplified subject validation functions on certificates.
+- Did some linting on certificates put function.
+
+Frontend
+- Updated ApiError wording.
+- Updated navbar components to make a little nicer.
+
+### Fixed
+Backend
+- Fixed cookie to properly permit cross-origin refresh. If cross-origin is not
+  configured, cookie SameSite is set to strict for added security.
+- Fixed inability for ACME Accounts secured by RSA key to validate DNS
+  challenges. (https://github.com/gregtwallace/legocerthub-backend/issues/1)
+
+Frontend
+- Fixed a path that was not properly updated when moving to Vite.
+- Fixed auth_expiration management by moving from a cookie to session storage.
+- Fixed app rendering where the wrong render would briefly appear before App
+  had loaded session storage data.
+
+### Removed
+Backend
+- Localhost is no longer always allowed by cross-origin header.
+- Removed some details regarding backend configuration when querying status.
+- Removed login expiration cookie.
+
+Frontend
+- Removed details related to backend status call change.
+
+
 ## [v0.7.0] - 2023-04-29
 
 Major updates were made to the frontend in this release, including removing
