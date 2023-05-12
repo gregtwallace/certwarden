@@ -35,6 +35,7 @@ COPY ./README.md .
 COPY ./CHANGELOG.md .
 COPY ./LICENSE.md .
 
+RUN sh -c "mkdir /app/data"
 RUN sh -c "echo \"bind_address: '0.0.0.0'\" > /app/data/config.yaml"
 
 EXPOSE 4050/tcp
