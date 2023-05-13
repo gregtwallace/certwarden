@@ -1,5 +1,34 @@
 # LeGo CertHub Changelog
 
+## [v0.9.0] - 2023-05-13
+
+This release brings a number of changes including an automatic check for new
+versions as well as docker support. Please review the config.default.yaml to
+ensure you're using all of the desired settings.
+
+### Added
+- Added update check that queries a remote json file daily to determine if a
+  new version is available. Auto update is not part of this and may be added at
+  a later date.
+- Docker support.
+- Log app version on start to make logs clear as to which version was running
+  during an event.
+
+### Changed
+- Allow really poor passwords in dev mode (removed min character length).
+
+### Fixed
+- Minor type fix in challenges.
+- Minor simplification of auth construction.
+- Flexbox on navbar.
+- Password change error not properly displaying.
+- Missing useEffect dependency in main.
+
+### Removed
+- Removed 'hostname' config option. Backend now configures the self hosted
+  frontend with an absolute path so a hostname isn't needed.
+
+
 ## [v0.8.0] - 2023-05-04
 
 > **Warning**
