@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Frontend Repo
+      - name: Checkout Main Repo
         uses: actions/checkout@v3
         with:
           repository: gregtwallace/legocerthub
