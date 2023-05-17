@@ -1,5 +1,33 @@
 # LeGo CertHub Changelog
 
+## [v0.9.1] - 2023-05-17
+
+Two additional challenge methods have been added. Most excitingly, if you
+clone the acme.sh repo you can use ANY dns provider supported by that set
+of scripts without having to edit any scripts yourself.
+
+Support for acme-dns was also added.
+
+You should add `config_version: 0` to your config file as this is a new
+check. Nothing will break without it but you will get an error in the log.
+
+### Added
+- Config version check to help flag when breaking changes are anticipated
+  during a version upgrade.
+- Support for acme-dns server (https://github.com/joohoi/acme-dns)
+- Support for acme.sh (https://github.com/acmesh-official/acme.sh)
+- Support for environment variables in dns-01 manual shell scripts.
+
+### Changed
+- Change update check display to show time last checked.
+
+### Fixed
+- Logging of stderr for dns-01 manual shell scripts.
+
+### Removed
+N/A
+
+
 ## [v0.9.0] - 2023-05-13
 
 This release brings a number of changes including an automatic check for new
