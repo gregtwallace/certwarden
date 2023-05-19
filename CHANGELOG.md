@@ -1,5 +1,29 @@
 # LeGo CertHub Changelog
 
+## [v0.9.2] - 2023-05-19
+
+Thanks to those that have made contributions!
+
+### Added
+- Build arm64 support both as binary and as docker image.
+- Add docker-compose.yml sample to repo.
+- Add sample docker build & commands.
+- Docker first run includes `config_version` now.
+- EXPERIMENTAL: Allow changing of ACME directories in config.
+
+### Changed
+- Changed docker binary to match other binaries.
+- Made acme.sh temp script name more specific.
+
+### Fixed
+N/A
+
+### Removed
+- All logging saves to log files now. `log` package has been completely 
+  removed.
+- Removed frontend references to Let's Encrypt.
+
+
 ## [v0.9.1] - 2023-05-17
 
 Two additional challenge methods have been added. Most excitingly, if you
