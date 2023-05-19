@@ -38,9 +38,11 @@ COPY ./LICENSE.md .
 RUN sh -c "mkdir /app/data"
 RUN sh -c "echo \"bind_address: '0.0.0.0'\" > /app/data/config.yaml"
 
+# Note: Do not disable http redirect once https is configured or healthcheck will break
+HEALTHCHECK CMD wget --no-verbose --tries=1 --spider http://localhost:4050/api/status || exit 1
+
 EXPOSE 4050/tcp
 EXPOSE 4055/tcp
 EXPOSE 4060/tcp
 
 CMD /app/legocerthub_server
-
