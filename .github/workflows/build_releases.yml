@@ -115,6 +115,9 @@ jobs:
           ref: ${{ env.GITHUB_REF }}
           fetch-depth: 0
 
+      - name: Install cross-compiler for linux/arm64
+        run: sudo apt-get -y install gcc-aarch64-linux-gnu
+
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
@@ -125,6 +128,7 @@ jobs:
         env:
           GOOS: linux
           GOARCH: arm64
+          CC: aarch64-linux-gnu-gcc
           CGO_ENABLED: 1
 
       - name: Save Compiled Binary
