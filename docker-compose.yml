@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  legocerthub:
+    container_name: legocerthub
+    image: ghcr.io/gregtwallace/legocerthub:latest
+    restart: unless-stopped
+    ports:
+      - 4050:4050   # server interface (http)
+      - 4055:4055   # server interface (https)
+      - 4060:4060   # http-01 challenge server (http)
+    volumes:
+      - ./data:/app/data
