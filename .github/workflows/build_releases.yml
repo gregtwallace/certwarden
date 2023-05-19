@@ -105,6 +105,34 @@ jobs:
           name: scripts-windows
           path: ./scripts/windows
 
+  build-backend-linux-arm64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Backend Repo
+        uses: actions/checkout@v3
+        with:
+          repository: gregtwallace/legocerthub-backend
+          ref: ${{ env.GITHUB_REF }}
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '${{ env.GO_VERSION }}'
+
+      - name: Build
+        run: go build -o ./lego-linux-arm64 -v ./cmd/api-server
+        env:
+          GOOS: linux
+          GOARCH: arm64
+          CGO_ENABLED: 1
+
+      - name: Save Compiled Binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: lego-linux-arm64
+          path: ./lego-linux-arm64
+
   build-backend-linux-amd64:
     runs-on: ubuntu-latest
     steps:
@@ -160,6 +188,68 @@ jobs:
         with:
           name: lego-windows-amd64
           path: ./lego-windows-amd64.exe
+
+  release-file-linux-arm64:
+    needs:
+      [
+        build-common,
+        build-frontend,
+        build-backend-common,
+        build-backend-linux-arm64,
+      ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Make release directory
+        run: mkdir ./release
+
+      - name: Download Frontend
+        uses: actions/download-artifact@v3
+        with:
+          name: frontend_build
+          path: ./release/frontend_build
+
+      - name: Download Backend Default Config
+        uses: actions/download-artifact@v3
+        with:
+          name: config.default.yaml
+          path: ./release
+
+      - name: Download Linux Scripts
+        uses: actions/download-artifact@v3
+        with:
+          name: scripts-linux
+          path: ./release/scripts
+
+      - name: Download Backend Binary
+        uses: actions/download-artifact@v3
+        with:
+          name: lego-linux-arm64
+          path: ./release
+
+      - name: Download README
+        uses: actions/download-artifact@v3
+        with:
+          name: README.md
+          path: ./release
+
+      - name: Download LICENSE
+        uses: actions/download-artifact@v3
+        with:
+          name: LICENSE.md
+          path: ./release
+
+      - name: Download CHANGELOG
+        uses: actions/download-artifact@v3
+        with:
+          name: CHANGELOG.md
+          path: ./release
+
+      - name: Save Release
+        uses: actions/upload-artifact@v3
+        with:
+          name: legocerthub_linux_arm64
+          path: ./release
 
   release-file-linux-amd64:
     needs:
