@@ -39,7 +39,10 @@ COPY ./CHANGELOG.md .
 COPY ./LICENSE.md .
 
 RUN sh -c "mkdir /app/data"
-RUN sh -c "echo \"bind_address: '0.0.0.0'\" > /app/data/config.yaml"
+RUN sh -c "printf '%s\n'                \
+            'config_version: 0'         \
+            'bind_address: \"0.0.0.0\"' \
+        > /app/data/config.yaml"
 
 # Note: Do not disable http redirect once https is configured or healthcheck will break
 HEALTHCHECK CMD wget --no-verbose --tries=1 --spider http://localhost:4050/api/status || exit 1
