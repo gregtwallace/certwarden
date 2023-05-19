@@ -1,3 +1,6 @@
+# example build:
+# docker build . --build-arg=BACKEND_VERSION=v0.8.0 --build-arg=FRONTEND_VERSION=v0.8.0 -t legocerthub:v0.8.0
+
 FROM node:18-alpine as frontend_build
 
 ARG FRONTEND_VERSION
