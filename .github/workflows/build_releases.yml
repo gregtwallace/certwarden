@@ -115,6 +115,9 @@ jobs:
           ref: ${{ env.GITHUB_REF }}
           fetch-depth: 0
 
+      - name: Update apt
+        run: sudo apt update
+
       - name: Install cross-compiler for linux/arm64
         run: sudo apt-get -y install gcc-aarch64-linux-gnu
 
