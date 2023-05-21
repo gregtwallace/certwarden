@@ -1,5 +1,29 @@
 # LeGo CertHub Changelog
 
+## [v0.9.3] - 2023-05-20
+
+Fixes dns_checker null pointer bug where dns methods don't work if Cloudflare
+method was not enabled (even if not using Cloudflare).
+
+### Added
+- Add External Account Binding support, though support of alternate CAs is
+  still considered experimental.
+- Add generic error code catcher on ACME calls.
+
+### Changed
+- Require email on accounts.
+
+### Fixed
+- Fix issue where dns_checker didn't start if dns-01 was being used but
+  Cloudflare was disabled.
+- Fix non-standard account field `createdAt`.
+- Fix response processing of account key rollover action.
+- Fix issue where frontend would erroneously display a `0` in form footers.
+
+### Removed
+N/A
+
+
 ## [v0.9.2] - 2023-05-19
 
 Thanks to those that have made contributions!
