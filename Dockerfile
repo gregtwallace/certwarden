@@ -48,7 +48,7 @@ RUN sh -c "printf '%s\n'                \
         > /app/data/config.yaml"
 
 # Note: Do not disable http redirect once https is configured or healthcheck will break
-HEALTHCHECK CMD wget --no-verbose --tries=1 --spider http://localhost:4050/api/status || exit 1
+HEALTHCHECK CMD wget --no-verbose --tries=1 --spider --no-check-certificate http://localhost:4050/api/health || exit 1
 
 EXPOSE 4050/tcp
 EXPOSE 4055/tcp
