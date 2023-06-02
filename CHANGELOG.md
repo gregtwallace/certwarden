@@ -1,5 +1,34 @@
 # LeGo CertHub Changelog
 
+## [v0.9.4] - 2023-06-02
+
+This fixes the docker health check and http redirect.
+
+### Added
+- Add a debug log line for the start up of the dns_checker service.
+- Add `/api/health` endpoint. This endpoint does not require authentication and
+  returns a 204 if the server is running.
+
+### Changed
+- Reduce min password length from 10 to 8 characters. This is less secure, please
+  don't actually do it! If you're doing dev work and want a bad password strictly
+  for testing, turn devMode on and min length is completely removed.
+
+### Fixed
+- Fix docker healthcheck failing. Corrected healthcheck in Dockerfile and also
+  set it to the `/api/health` endpoint.
+- Fix unlikely case where isRefreshing may not properly change back to false on
+  the frontend if the token refresh errored.
+- Fix http redirect in cases where bind address is not the correct browser address.
+  For example, previously binding to `0.0.0.0` would cause an incorrect redirect to
+  https://0.0.0.0 rather than the actual server. The new method uses the same
+  hostname as was in the original request so it doesn't matter what the bind
+  address is set to or what alias the client is using to connect.
+
+### Removed
+N/A
+
+
 ## [v0.9.3] - 2023-05-20
 
 Fixes dns_checker null pointer bug where dns methods don't work if Cloudflare
