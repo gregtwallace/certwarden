@@ -1,5 +1,49 @@
 # LeGo CertHub Changelog
 
+## [v0.10.0] - 2023-06-19
+
+Primarily this update adds support for custom ACME Servers instead of just
+hardcoding Let's Encrypt. This functionality can be found in the web UI
+Settings. I've done some testing with Google Cloud but that's about it. LE
+is still the most tested provider but feel free to open issues if you run
+across problems with others.
+
+Warning: Your database schema will be modified upon install, so make sure you do
+a backup just in case.
+
+Warning 2: If you've changed the default ACME server in the last version you
+will need to manually edit the database after upgrade to fix the directory
+URLs. The upgrade assumes prior use of LE servers and sets those values.
+
+### Added
+- Add acme_servers package to manage acme services. This allows users to define
+  which ACME Servers they want to use instead of just Let's Encrypt.
+- Add comments in default config to elaborate on what dev_mode does.
+- Add db user_version as part of db creation.
+- Add db user_version upgrade logic from v0 to v1 (these changes are to
+  implement the new acme_servers package).
+- Add information on server status and new versions regarding db version.
+- Add warning in frontend if new version will update db user_version.
+- Add widget in Settings to link to ACME Servers viewing and editing. This is
+  instead of adding a sidebar link.
+
+### Changed
+- Update Vite to version 4.3.9.
+- Refactor challenges so storage does not depend on it. This also changes the
+  logic for who enabled/disabled is reported.
+- Don't export Storage service members.
+- Modify frontend to reflect changes to backend status and new version reporting.
+- Lint Button component.
+
+### Fixed
+- Fix a broken error check in certificates.
+- Fix frontend password length check to match backend (which was changed last
+  version).
+
+### Removed
+N/A
+
+
 ## [v0.9.4] - 2023-06-02
 
 This fixes the docker health check and http redirect.
