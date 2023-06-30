@@ -1,5 +1,37 @@
 # LeGo CertHub Changelog
 
+## [v0.10.1] - 2023-06-30
+
+Minor updates including modifying the base path for services so LeGo can sit
+behind a reverse proxy.
+
+Ideally you would update all client scripts to include the new base path when
+accessing the api (e.g. `/legocerthub/api`), however, redirect routes were
+added so this isn't necessary (yet).
+
+### Added
+- Add base path of `/legocerthub` for both /app and /api. This allows LeGo to
+  sit behind a reverse proxy. Redirect routes were added to provide backward
+  compatibility with scripts calling the old paths (assuming LeGo isn't behind
+  a reverse proxy).
+- Add comments regarding how to configure cloudflare dns challenges.
+
+### Changed
+- Cloudflare dns challenge no longer requires specifying zone names when using
+  an API token. LeGo automatically queries for available zones.
+- Cloudflare dns challenge confirms that the proper permission exists (edit dns)
+  before adding a zone (domain) to the configured list. If the permission is
+  missing, a warning is logged.
+
+### Fixed
+- Modify `netcap` command in linux install and update scripts. Some OSes
+  will error if the command uses a wildcard.
+- Fix typo relating to cloudflare dns challenges in config.default.yaml.
+
+### Removed
+- Removed unused var when backend creates environment for frontend.
+
+
 ## [v0.10.0] - 2023-06-19
 
 Primarily this update adds support for custom ACME Servers instead of just
