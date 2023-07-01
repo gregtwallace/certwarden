@@ -1,6 +1,6 @@
 # LeGo CertHub Changelog
 
-## [v0.10.1] - 2023-06-30
+## [v0.10.2] - 2023-06-30
 
 Minor updates including modifying the base path for services so LeGo can sit
 behind a reverse proxy.
@@ -31,6 +31,8 @@ added so this isn't necessary (yet).
 ### Removed
 - Removed unused var when backend creates environment for frontend.
 
+
+## [v0.10.1] - Skipped
 
 ## [v0.10.0] - 2023-06-19
 
