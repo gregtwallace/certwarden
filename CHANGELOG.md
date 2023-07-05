@@ -1,5 +1,32 @@
 # LeGo CertHub Changelog
 
+## [v0.10.3] - 2023-07-05
+
+This release adds the ability to manually edit API keys. This functionality
+is intended for advanced users only.
+
+There are also a number of minor bug fixes.
+
+### Added
+- Added ability to directly edit API keys. This is generally discouraged
+  though.
+
+### Changed
+- Improved Cloudflare error logging.
+- Reorganize file structure of some frontend components.
+
+### Fixed
+- Fixed bad app redirect from root path `/`.
+- Fixed bad redirect from http to https in certain configurations.
+- Fixed sql query for PUT on certs.
+- Fixed sql query for PUT on keys.
+- Fixed edit cert re-render due to incorrect comparison of subject alt
+  arrays.
+
+### Removed
+N/A
+
+
 ## [v0.10.2] - 2023-06-30
 
 Minor updates including modifying the base path for services so LeGo can sit
