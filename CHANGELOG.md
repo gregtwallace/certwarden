@@ -1,5 +1,37 @@
 # LeGo CertHub Changelog
 
+## [v0.10.4] - 2023-07-18
+
+This release mainly upgrades code dependencies.
+
+### Added
+- Some default config comments regarding Docker.
+
+### Changed
+- Upgrade to Go 1.20.6.
+- Upgrade to Node 18.17.
+- Upgrade to Vite 4.4.4.
+- Upgrade to eslint 8.45.0.
+- Upgrade to semver 6.3.1.
+- Upgrade @emotion/react                ^11.10.6  →   ^11.11.1
+- Upgrade @emotion/styled               ^11.10.6  →   ^11.11.0
+- Upgrade @fontsource/roboto            ^4.5.8    →   ^5.0.5
+- Upgrade @mui/icons-material           ^5.11.16  →   ^5.14.0
+- Upgrade @mui/material                 ^5.12.2   →   ^5.14.0
+- Upgrade @types/react                  ^18.0.28  →   ^18.2.15
+- Upgrade @types/react-dom              ^18.0.11  →   ^18.2.7
+- Upgrade @vitejs/plugin-react-swc      ^3.0.0    →   ^3.3.2
+- Upgrade axios                         ^1.3.6    →   ^1.4.0
+- Upgrade eslint-plugin-react-refresh   ^0.3.4    →   ^0.4.3
+
+### Fixed
+- Fixed refresh cookie when running in http mode.
+- Fixed typo in NODE_VERSION build var.
+
+### Removed
+N/A
+
+
 ## [v0.10.3] - 2023-07-05
 
 This release adds the ability to manually edit API keys. This functionality
