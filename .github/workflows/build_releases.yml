@@ -9,7 +9,7 @@ on:
 env:
   GITHUB_REF: ${{ github.ref }}
   GO_VERSION: '1.20.6'
-  NODE_VERSION': '14.x'
+  NODE_VERSION: '14.x'
 
 jobs:
   build-common:
