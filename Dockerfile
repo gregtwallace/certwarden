@@ -34,6 +34,9 @@ FROM alpine:latest
 
 WORKDIR /app
 
+# bash is needed in the container by the backend
+RUN apt add bash
+
 COPY --from=backend_build /src/lego-linux-amd64 .
 COPY --from=backend_build /src/config.default.yaml .
 COPY --from=frontend_build /src/dist ./frontend_build
