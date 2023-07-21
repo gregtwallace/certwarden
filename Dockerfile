@@ -34,6 +34,12 @@ FROM alpine:latest
 
 WORKDIR /app
 
+# acme.sh dependencies
+RUN apk add bash
+RUN apk add curl
+RUN mkdir -p /root/.acme.sh
+
+# copy app
 COPY --from=backend_build /src/lego-linux-amd64 .
 COPY --from=backend_build /src/config.default.yaml .
 COPY --from=frontend_build /src/dist ./frontend_build
@@ -41,6 +47,7 @@ COPY ./README.md .
 COPY ./CHANGELOG.md .
 COPY ./LICENSE.md .
 
+# make default config
 RUN sh -c "mkdir /app/data"
 RUN sh -c "printf '%s\n'                \
             'config_version: 0'         \
