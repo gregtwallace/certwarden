@@ -1,5 +1,25 @@
 # LeGo CertHub Changelog
 
+## [v0.10.5] - 2023-07-22
+
+This update fixes the acme.sh challenge method when running in Docker
+container. It also bundles the acme.sh scripts with LeGo so no extra
+modifications are needed to use this method.
+
+### Added
+- Bundle acme.sh scripts (v3.0.6) with LeGo.
+
+### Changed
+- N/A
+
+### Fixed
+- Fix acme.sh challenge method when running in Docker.
+- Fix linux scripts (primarily install and upgrade scripts).
+
+### Removed
+N/A
+
+
 ## [v0.10.4] - 2023-07-18
 
 This release mainly upgrades code dependencies.
