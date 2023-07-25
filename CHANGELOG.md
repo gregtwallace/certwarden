@@ -1,5 +1,26 @@
 # LeGo CertHub Changelog
 
+## [v0.11.0] - 2023-07-25
+
+This release streamlines new certificate creation by allowing simultaneous
+key generation. In the new certificate 'private key' drop down, there is a
+new option to generate a key. This eliminates the need to make a new key
+separately first. The key name, description, and other fields are copied
+from what is specified on the certificate.
+
+### Added
+- Add ability to generate a key simultaneously with a new certificate.
+
+### Changed
+- Set default new key to Generate and ECDSA P-256.
+
+### Fixed
+N/A
+
+### Removed
+N/A
+
+
 ## [v0.10.5] - 2023-07-22
 
 This update fixes the acme.sh challenge method when running in Docker
@@ -10,7 +31,7 @@ modifications are needed to use this method.
 - Bundle acme.sh scripts (v3.0.6) with LeGo.
 
 ### Changed
-- N/A
+N/A
 
 ### Fixed
 - Fix acme.sh challenge method when running in Docker.
