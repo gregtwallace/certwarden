@@ -1,5 +1,24 @@
 # LeGo CertHub Changelog
 
+## [v0.11.1] - 2023-07-26
+
+The only fix in this update is acme.sh being added to the Docker
+container. If you're not using Docker, there is no difference between
+0.11.0 and 0.11.1.
+
+### Added
+N/A
+
+### Changed
+N/A
+
+### Fixed
+- Fixed acme.sh not installing into the Docker container.
+
+### Removed
+N/A
+
+
 ## [v0.11.0] - 2023-07-25
 
 This release streamlines new certificate creation by allowing simultaneous
