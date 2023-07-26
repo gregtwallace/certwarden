@@ -42,6 +42,7 @@ RUN mkdir -p /root/.acme.sh
 # copy app
 COPY --from=backend_build /src/lego-linux-amd64 .
 COPY --from=backend_build /src/config.default.yaml .
+COPY --from=backend_build /src/scripts/linux ./scripts
 COPY --from=frontend_build /src/dist ./frontend_build
 COPY ./README.md .
 COPY ./CHANGELOG.md .
