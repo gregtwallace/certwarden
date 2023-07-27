@@ -1,5 +1,38 @@
 # LeGo CertHub Changelog
 
+## [v0.12.0] - 2023-07-27
+
+This version brings support for conditional headers. It also cleans up
+some of the backend logic and fixes a couple of issues.
+
+### Added
+- Add etag header to pem files when they're sent.
+- Add last-modified time stamp to pem files when they're sent.
+- Add support for request headers if-match and if-none-match.
+- Add support for request headers if-modified-since and
+  if-unmodified-since.
+- Add support for request header if-range.
+
+### Changed
+- Use http.ServeContent to send pem files to clients instead of previous
+  Write method.
+- Switch to a separate CORS package for ease of use and to ensure proper
+  specs are followed without having to maintain it myself.
+- Overhauled logic in storage and download packages so pem output is a
+  little more sane.
+- Updated output package logging to make it a little cleaner and clarify
+  some log messages.
+
+### Fixed
+- Fixed issue where legacy request api keys would be saved to log.
+- Fixed check that always said db needs an upgrade in new version even
+  when it didn't.
+- Added missing x-api-key and apikey headers to CORS list.
+
+### Removed
+N/A
+
+
 ## [v0.11.1] - 2023-07-26
 
 The only fix in this update is acme.sh being added to the Docker
