@@ -1,6 +1,6 @@
 # LeGo CertHub Changelog
 
-## [v0.12.2] - 2023-08-06
+## [v0.12.3] - 2023-08-06
 
 This version is mostly minor fixes.  Pprof support is also added.
 
@@ -26,6 +26,8 @@ This version is mostly minor fixes.  Pprof support is also added.
 ### Removed
 - Cloudflare zone map does not require safety, so mutex was removed.
 
+
+## [v0.12.2] - Skipped
 
 ## [v0.12.1] - Skipped
 
