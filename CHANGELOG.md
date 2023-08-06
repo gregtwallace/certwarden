@@ -1,5 +1,32 @@
 # LeGo CertHub Changelog
 
+## [v0.12.1] - 2023-08-06
+
+This version is mostly minor fixes.  Pprof support is also added.
+
+### Added
+- Add pprof support. Default config option has it disabled though.
+- On account object output, include EAB and TOS fields for the relevant
+  ACME server.
+
+### Changed
+- Conditionally show EAB fields only when they're needed.
+- Only show KID on frontend if debug and it is known.
+- Use http.ServeContent to serve zip files.
+- Deprecate 'domain' arg in dns01 manual method.
+- Set directory refresh to occur at 1am + random minute rather than 24
+  hours from the last one.
+
+### Fixed
+- Fix Cloudflare challenge method failing for domains where the zone has
+  more than two parts (e.g. some-name.in.ua).
+  See: https://github.com/gregtwallace/legocerthub/issues/22
+- Minor code cleanup (move an error, remove an export, and fix a typo).
+
+### Removed
+- Cloudflare zone map does not require safety, so mutex was removed.
+
+
 ## [v0.12.0] - 2023-07-27
 
 This version brings support for conditional headers. It also cleans up
