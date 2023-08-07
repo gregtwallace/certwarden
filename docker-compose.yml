@@ -9,5 +9,6 @@ services:
       - 4050:4050   # server interface (http)
       - 4055:4055   # server interface (https)
       - 4060:4060   # http-01 challenge server (http)
+      - 4065:4065   # pprof debug server (http)
     volumes:
       - ./data:/app/data
