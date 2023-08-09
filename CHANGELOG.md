@@ -1,5 +1,35 @@
 # LeGo CertHub Changelog
 
+## [v0.12.4] - 2023-08-08
+
+This release resolves a significant issue with the challenge solver
+failing in certain cases involving wild card certificates or multiple
+ACME providers.
+
+### Added
+- Add an error if user tries to enable acme.sh on a Windows server.
+- Add better notes in default config regarding acme.sh options.
+- Add shutdown handler for client to trigger LeGo shutdown.
+- Make WorkTracker data type for reuse.
+
+### Changed
+- Move pprof to its own http server and port.
+- Significant overhaul of custom http client to make it more sane.
+- Rework how challenge resource provisioning is tracked. Instead of in
+  each method, centralize in Challenges package.
+- Some minor code tidy up.
+
+### Fixed
+- Fix when multiple workers are trying to solve Challenges that use
+  the same resource name. This could cause Orders to fail under certain
+  conditions. Instead, queue the resources and solve the Challenges
+  one at a time.
+- Make Cloudflare use the app's http Client with the proper settings.
+
+### Removed
+N/A
+
+
 ## [v0.12.3] - 2023-08-06
 
 This version is mostly minor fixes.  Pprof support is also added.
