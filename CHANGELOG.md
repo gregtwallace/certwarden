@@ -1,5 +1,36 @@
 # LeGo CertHub Changelog
 
+## [v0.12.5] - 2023-08-11
+
+This release adds shutdown and restart functions. Otherwise, it mainly
+fixes some minor bugs and optimizes some code.
+
+Config Note: 'private_key_name' is no longer a config field. The key
+is now derived from 'certificate_name'.
+
+### Added
+- Add shutdown and restart routes with buttons in frontend to trigger
+  those routes.
+
+### Changed
+- Update some route names.
+- Update LeGo https certificate reload logic to no longer require a go
+  routine. LeGo cert will update as soon as it renews.
+- Optimize view log handler for better memory footprint.
+- Update output package to remove unneeded vars.
+
+### Fixed
+- Fix broken log download handler and optimize related code.
+- Modify logger so it is gracefully closed on exit, though it is not
+  perfect due to lumberjack bug:
+  https://github.com/natefinch/lumberjack/issues/56
+- Fix log view handler failing to close file.
+
+### Removed
+- Remove LeGo config option for private key. Private key is now derived
+  from the certificate name.
+
+
 ## [v0.12.4] - 2023-08-08
 
 This release resolves a significant issue with the challenge solver
