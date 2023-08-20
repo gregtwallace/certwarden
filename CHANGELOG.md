@@ -1,5 +1,28 @@
 # LeGo CertHub Changelog
 
+## [v0.12.6] - 2023-08-20
+
+Releasing solely to fix importing of private keys via the frontend UI.
+There are other minor changes but they are so minor they probably aren't
+relevant to users.
+
+### Added
+N/A
+
+### Changed
+- Generic-ify SafeMap (minor code clean improvements).
+- Minor update to handling of empty acme time in Order object NotBefore
+  and NotAfter fields.
+- Verify session is still valid before refreshing a session. This was
+  already being done, but made it more explicit.
+
+### Fixed
+- Fix private key import via frontend UI.
+
+### Removed
+N/A
+
+
 ## [v0.12.5] - 2023-08-11
 
 This release adds shutdown and restart functions. Otherwise, it mainly
