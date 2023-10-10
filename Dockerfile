@@ -37,6 +37,7 @@ WORKDIR /app
 # acme.sh dependencies
 RUN apk add bash
 RUN apk add curl
+RUN apk add openssl
 RUN mkdir -p /root/.acme.sh
 
 # copy app
