@@ -52,8 +52,7 @@ COPY ./LICENSE.md .
 # make default config
 RUN sh -c "mkdir /app/data"
 RUN sh -c "printf '%s\n'                \
-            'config_version: 0'         \
-            'bind_address: \"0.0.0.0\"' \
+            'config_version: 1'         \
         > /app/data/config.yaml"
 
 # Note: Do not disable http redirect once https is configured or healthcheck will break
