@@ -1,5 +1,64 @@
 # LeGo CertHub Changelog
 
+## [v0.13.0] - 2023-10-10
+
+> **Warning**
+> Please read as there are breaking changes requiring manual intervention.
+
+1: LeGo config MUST be updated using the new provider format which includes
+specifying domains. See the example config file. A wildcard provider can also
+be configured (single domain of *) and LeGo will use this provider if there
+is no provider configured for a given domain. If you only use one provider,
+you should add the wildcard domain and you're done.
+
+2: Domain arg has been removed from dns manual scripts. Domain cannot be reliably
+determined and as such it has been removed. This caused the position of the args
+for these scripts to move and your scripts will need an update if you use this
+method.
+
+3: Removed redirects from old paths. When LeGo added the base path /legocerthub
+old routes at base / were given redirects to prevent breakage. These redirects
+are now removed and any clients using the old paths will need their scripts
+updated.
+
+This release does away with the need to select a challenge provider for each
+certificate. It also has several tweaks and minor fixes.
+
+The groundwork is also in place to add/edit/delete providers via the GUI. This
+will be added in a future version.
+
+### Added
+- Add environment output on sample dns scripts.
+- Add backend functionality to modify providers while server is running via
+  routes. Frontend modification not yet added.
+- Add ability to view providers in the frontend.
+
+### Changed
+- Update to logging of some debug info.
+- Separate default config from example config to make it more apparent what the
+  default settings are.
+- Reduce API key length from 48 to 32. This is based on an entropy calculation
+  and still provides adequate security.
+- Move ACME Servers to side bar in frontend navigation.
+- Update config version from 0 to 1 (see notes above).
+- Code clean up in several spots.
+- Clarified various log messages.
+- Clean up and streamline logic for form handling on frontend, including
+  common input handler.
+
+### Fixed
+- Do a better job of redacting certain sensitive information in debug logs.
+- Fix api keys form unchanged calculation.
+- Add openssl to dockerbuild (needed for acme.sh).
+- Fix usage of access_token by frontend.
+- Fix manifest paths.
+
+### Removed
+- Remove need to select a challenge method. Instead, domains are configured
+  and LeGo automatically selects the correct provider based on the domains
+  in the certificate.
+
+
 ## [v0.12.6] - 2023-08-20
 
 Releasing solely to fix importing of private keys via the frontend UI.
