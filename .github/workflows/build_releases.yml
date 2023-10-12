@@ -93,6 +93,12 @@ jobs:
           name: config.default.yaml
           path: ./config.default.yaml
 
+      - name: Save Example Config
+        uses: actions/upload-artifact@v3
+        with:
+          name: config.example.yaml
+          path: ./config.example.yaml
+
       - name: Save Scripts (Linux)
         uses: actions/upload-artifact@v3
         with:
@@ -222,6 +228,12 @@ jobs:
           name: config.default.yaml
           path: ./release
 
+      - name: Download Backend Example Config
+        uses: actions/download-artifact@v3
+        with:
+          name: config.example.yaml
+          path: ./release
+
       - name: Download Linux Scripts
         uses: actions/download-artifact@v3
         with:
@@ -284,6 +296,12 @@ jobs:
           name: config.default.yaml
           path: ./release
 
+      - name: Download Backend Example Config
+        uses: actions/download-artifact@v3
+        with:
+          name: config.example.yaml
+          path: ./release
+
       - name: Download Linux Scripts
         uses: actions/download-artifact@v3
         with:
@@ -344,6 +362,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: config.default.yaml
+          path: ./release
+
+      - name: Download Backend Example Config
+        uses: actions/download-artifact@v3
+        with:
+          name: config.example.yaml
           path: ./release
 
       - name: Download Windows Scripts
