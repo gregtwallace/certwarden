@@ -1,5 +1,37 @@
 # LeGo CertHub Changelog
 
+## [v0.13.1] - 2023-10-12
+
+This release adds the ability to add, edit, and delete providers via the
+frontend GUI. It is now possible to setup LeGo without manually editing
+the config file. You should still check the config example to see if you
+need or want to set any of those options.
+
+### Added
+- Add ability to add, edit, and delete providers via the GUI and without
+  having to restart LeGo.
+- Add example config to release packages and docker image. This should
+  have been added last version.
+
+### Changed
+- If dns_checker can't properly configure dns servers, fallback to sleep
+  for 2 minutes. This is to avoid app start failure in this instance and
+  instead to use a reasonable alternative. An error is still logged.
+- Change deprecated substr func to substring func.
+- Set 'Revoke' button on certificate orders to be red.
+- Don't redact acme-dns provider info. It isn't sensitive enough to
+  justify the additional complexity.
+- Always log some basic info when orders are placed and completed.
+  Previously this was only showing at debug log level.
+
+### Fixed
+- Fix sometimes non-unique key on GUI display of provider config.
+- Fix handling of redacted info when it is POSTed.
+
+### Removed
+N/A
+
+
 ## [v0.13.0] - 2023-10-10
 
 > **Warning**
