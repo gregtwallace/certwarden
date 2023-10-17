@@ -1,6 +1,6 @@
 # LeGo CertHub Changelog
 
-## [v0.14.0] - 2023-10-17
+## [v0.14.1] - 2023-10-17
 
 The are two significant updates in this version. The first is the removal
 of dev mode and related feature disablement over http. This provides more
@@ -38,6 +38,8 @@ in the background without having to look through the logs.
   (instead of https).
 - Remove password complexity requirements.
 
+
+## [v0.14.0] - Skipped
 
 ## [v0.13.1] - 2023-10-12
 
