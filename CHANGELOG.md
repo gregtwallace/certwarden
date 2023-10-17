@@ -1,5 +1,44 @@
 # LeGo CertHub Changelog
 
+## [v0.14.0] - 2023-10-17
+
+The are two significant updates in this version. The first is the removal
+of dev mode and related feature disablement over http. This provides more
+configuration flexibility (e.g. behind a reverse proxy) but does forego
+some security. Users are trusted to choose what is right for them.
+
+The other major update is the addition of the ability to review orders
+that are in progress or queued up to be worked. The new section "Order
+Queue" shows both orders actively being worked by a worker and also
+orders awaiting an available worker. The list of orders show under edit
+certificate also reflects if a particular order is already in the queue
+and the "Retry" button is disabled if the order already queued up. This
+feature should eliminate some of the "guessing" about what LeGo is doing
+in the background without having to look through the logs.
+
+### Added
+- Add ability to view orders currently being worked on and queued to be
+  worked on when a worker is available.
+
+### Changed
+- Update worker log messages to include worker number.
+- Return 404 for bad routes instead of 401.
+- Frontend dev mode replaced with show/log debug info. This is set by the
+  backend if log level is debug.
+- Change some minor styling on frontend.
+- On frontend edit certificate, update order status to reflect information
+  if the order is in the order worker queue.
+
+### Fixed
+- Fix border colors on input array of objects of text fields.
+
+### Removed
+- Remove dev mode.
+- Remove disabling of certain functions when server is running over http
+  (instead of https).
+- Remove password complexity requirements.
+
+
 ## [v0.13.1] - 2023-10-12
 
 This release adds the ability to add, edit, and delete providers via the
