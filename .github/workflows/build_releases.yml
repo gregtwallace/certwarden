@@ -8,6 +8,7 @@ on:
 
 env:
   GITHUB_REF: ${{ github.ref }}
+  # Versions - keep in sync with Dockerfile
   GO_VERSION: '1.21.3'
   NODE_VERSION: '18.18.2'
 

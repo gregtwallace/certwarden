@@ -4,7 +4,15 @@
 # example run
 # docker run -d --name legocerthub -v ./data:/app/data -p 4050:4050 -p 4055:4055 -p 4060:4060 -p 4065:4065 ghcr.io/gregtwallace/legocerthub:latest
 
-FROM node:18-alpine as frontend_build
+# Versions - keep in sync with build_releases.yml
+ARG ALPINE_VERSION=3.17
+ARG GO_VERSION=1.21.3
+ARG NODE_VERSION=18.18.2
+# https://hub.docker.com/_/alpine
+# https://hub.docker.com/_/golang
+# https://hub.docker.com/_/node
+
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} as frontend_build
 
 ARG FRONTEND_VERSION
 
@@ -17,7 +25,7 @@ RUN apk add git && \
     npx vite build
 
 
-FROM golang:alpine AS backend_build
+FROM golang:${GO_VERSION}-alpine${ALPINE_VERSION} AS backend_build
 
 ARG BACKEND_VERSION
 ARG CGO_ENABLED=1
@@ -30,7 +38,7 @@ RUN apk add git gcc musl-dev && \
     go build -o ./lego-linux-amd64 ./cmd/api-server
 
 
-FROM alpine:latest
+FROM alpine:${ALPINE_VERSION}
 
 WORKDIR /app
 
