@@ -58,11 +58,9 @@ COPY ./README.md .
 COPY ./CHANGELOG.md .
 COPY ./LICENSE.md .
 
-# make default config
+# make default data folder
 RUN sh -c "mkdir /app/data"
-RUN sh -c "printf '%s\n'                \
-            'config_version: 1'         \
-        > /app/data/config.yaml"
+# defer empty config file generation to LeGo on first run (if not manually made by user prior)
 
 # Note: Do not disable http redirect once https is configured or healthcheck will break
 HEALTHCHECK CMD wget --no-verbose --tries=1 --spider --no-check-certificate http://localhost:4050/legocerthub/api/health || exit 1
