@@ -100,6 +100,12 @@ jobs:
           name: config.example.yaml
           path: ./config.example.yaml
 
+      - name: Save Config Changelog
+        uses: actions/upload-artifact@v3
+        with:
+          name: config.changelog.md
+          path: ./config.changelog.md
+
       - name: Save Scripts (Linux)
         uses: actions/upload-artifact@v3
         with:
@@ -235,6 +241,12 @@ jobs:
           name: config.example.yaml
           path: ./release
 
+      - name: Download Config Changelog
+        uses: actions/download-artifact@v3
+        with:
+          name: config.changelog.md
+          path: ./release
+
       - name: Download Linux Scripts
         uses: actions/download-artifact@v3
         with:
@@ -303,6 +315,12 @@ jobs:
           name: config.example.yaml
           path: ./release
 
+      - name: Download Config Changelog
+        uses: actions/download-artifact@v3
+        with:
+          name: config.changelog.md
+          path: ./release
+
       - name: Download Linux Scripts
         uses: actions/download-artifact@v3
         with:
@@ -369,6 +387,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: config.example.yaml
+          path: ./release
+
+      - name: Download Config Changelog
+        uses: actions/download-artifact@v3
+        with:
+          name: config.changelog.md
           path: ./release
 
       - name: Download Windows Scripts
