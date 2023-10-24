@@ -1,5 +1,81 @@
 # LeGo CertHub Changelog
 
+## [v0.15.0] - 2023-10-23
+
+> **Warning**
+> You must ensure your config.yaml is at least config_version: 1 prior to
+> installing or LeGo will not start.
+
+Note: If you are new or don't have a config.yaml, one will be created for
+you on the first run of LeGo.
+
+Moving forward LeGo will enforce config_version but will migrate seemlessly
+unless there are notes to the contrary. Notes will include specific needed
+actions. To assist with changes across versions, all releases now include a
+config.changelog.md which notes all changes, not just breaking changes.
+
+If you are already on the previous version (0.14.1) you can just manually
+insert `config_version: 1` without any other changes. You should still
+review the config default and example to ensure you have the options you
+want.
+
+This version also includes a bunch of other features, most of which revolve
+around adding more security to LeGo.
+
+### Added
+- Create config.yaml if one does not exist.
+- Add strict enforcement of config.yaml schema version.
+- Add auto update schema from 1 to 2. Older version 0 or unspecified
+  version will need manual intervention (at a minimum config_version
+  will need to be added).
+- Add HTTP Strict Transport Security (HSTS) header by default. Config has
+  an option to disable the header (`disable_hsts`).
+- Add relatively strict `Content-Security-Policy` header, including nonces
+  on scripts. Vite does not yet support nonces for style but I will add
+  it later when it does.
+- Add headers to prevent MIME type sniffing and iframes.
+- Add `frontend_show_debug_info` config option to set frontend to show
+  debug info and do some console.logging.
+- Add ability to clear the update notification from the left side
+  navigation bar.
+- Add logout tooltip.
+- Add theme toggle tooltip.
+- Add data-preload on style, script, and link tags.
+- Add timeout context on Cloudflare API calls.
+- Include config.changelog.md in releases. This file details changes to
+  config.yaml over time.
+
+### Changed
+- Move theme toggle to just an icon in bottom right corner in footer.
+- Rewrite frontend file handler on the Go backend. Needed to provide
+  more consistent headers and nonce support.
+- Update to Go 1.21.3, Node 18.18.2, and Vite 4.5.0.
+- Update all other dependencies in frontend and backend.
+- Update acme.sh script to 3.0.7 (adds a couple more dns providers).
+- Update Cloudflare provider to utilize newest Cloudflare Go api.
+- Some minor code cleanup.
+- Rename `cors_permitted_origins config option` to 
+  `cors_permitted_crossorigins`.
+- Minor navbar restyling.
+- Change status/new version information and update frontend to properly
+  show the changed information.
+- Redact certain senstive information when the frontend is set to log
+  debug info to the console.
+
+### Fixed
+- Fix accidentally allowing all cross-origins by default. If no origins
+  are specified, CORS is disabled.
+- Explicitly set dockerbuild tool versions so binary releases and docker
+  releases are built in the same way.
+
+### Removed
+- Removed dockerfile generation of empty config file. This is now handled
+  by the backend when it runs for the first time.
+- Remove frontend Settings link to backend URL. Link just goes to a 404
+  so there isn't really a point.
+- Remove Roboto font include and move it to external files.
+
+
 ## [v0.14.1] - 2023-10-17
 
 The are two significant updates in this version. The first is the removal
