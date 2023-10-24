@@ -1,9 +1,9 @@
 [
   {
     "channel": "beta",
-    "version": "0.14.1",
-    "config_version": 1,
+    "version": "0.15.0",
+    "config_version": 2,
     "database_version": 2,
-    "url": "https://github.com/gregtwallace/legocerthub/releases/tag/v0.14.1"
+    "url": "https://github.com/gregtwallace/legocerthub/releases/tag/v0.15.0"
   }
 ]
