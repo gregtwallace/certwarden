@@ -1,5 +1,45 @@
 # LeGo CertHub Changelog
 
+## [v0.15.1] - 2023-10-31
+
+This release is mostly quality of life improvements. Various security
+mechanisms are fine tuned and some minor bugs are fixed.
+
+### Added
+- Add Referrer-Policy and set to no-referrer.
+- Add more security headers to all server responses.
+- Use nonce for styles in Content Security Policy by setting on a meta
+  property and using some crafty on the fly code tweaking when the backend
+  serves the relevant js file.
+
+### Changed
+- Tighten up Content Security Policy.
+- Rewrote backend middleware logic to make code easier to follow and to make
+  it easier to adjust middlewares moving forward.
+- Don't use CORS on 404 error.
+- Secure change password and logout routes with access token. (This was
+  secure before, the logic is just more consistent now.)
+- Simplify backend logout logic.
+- Auth minor code cleanup for clarity.
+- Rename refresh token to session token and update references to 'session'
+  for consistency.
+- Update dns_checker log messages.
+- Use full base64 character set for nonce generation.
+- Simplify (streamline) frontend useAuth hook.
+
+### Fixed
+- Fix broken checkbox when editing an ACME Server.
+- Fix Vary header usage logic for download.
+- Update auth log message format to match new format.
+- Add proper fallback options to Content Security Policy.
+- Fix retry logic on frontend during access token refresh (fewer unneeded
+  retries will occur).
+
+### Removed
+- Remove nonce from scripts in Content Security Policy and only allow
+  'self' in script Content Security Policy.
+
+
 ## [v0.15.0] - 2023-10-23
 
 > **Warning**
