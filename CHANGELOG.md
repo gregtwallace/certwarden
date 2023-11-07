@@ -1,5 +1,28 @@
 # LeGo CertHub Changelog
 
+## [v0.15.2] - 2023-11-06
+
+This release is quality of life. It mainly addresses things related to
+logging.
+
+### Added
+- Info log logout success.
+
+### Changed
+- Tweak wording on frontend describing the order queue.
+- Reorder CSP params.
+- Rename error handling middleware to not use the word error.
+
+### Fixed
+- Fix inaccurate info logging of certain information when serving the
+  frontend. This was creating log clutter that should only be in debug.
+- Fix CSP whitespace on default policy.
+- Fix typing of json response Message field.
+
+### Removed
+N/A
+
+
 ## [v0.15.1] - 2023-10-31
 
 This release is mostly quality of life improvements. Various security
