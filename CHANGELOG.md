@@ -1,5 +1,48 @@
 # LeGo CertHub Changelog
 
+## [v0.16.0] - 2023-11-25
+
+The frontend has been completely updated to TypeScript with full type
+safety. This involved a ton of code changes, please report any issues.
+
+If you experience something breaking, the previous version has the same
+config and database versions, so report the issue and downgrade both
+the frontend and the backend binary to the previous version.
+
+### Added
+- Add redirect if invalid page is specified when viewing a table of
+  things (e.g. keys, certs, etc).
+- Add redirect of any frontend path when logged out to the main root
+  path.
+
+### Changed
+- Complete overhaul to implement TypeScript.
+- Overhaul backend responses to be more detailed and consistent.
+- Update contexts and hooks on frontend for a little bit more sanity.
+- Updated input handler to use recursion and support any depth object.
+  Also changed methodology of the handler to make it compatible with
+  type safety.
+- Show success or error message on password change.
+- Update frontend server url validation to confirm only valid
+  characters in addition to https.
+- Submit button on forms is always enabled.
+- Use regex for field name matching to look up value type and error
+  message.
+- Remove some info from displaying on providers summary page. To get
+  all of the details, click into 'Edit'.
+- Update type for validation errors and method of recording errors.
+- Update frontend dependencies.
+
+### Fixed
+- Update Axios version to address a security issue.
+- Show success or error message on password change.
+- Fix sorting of account list by environment column.
+- Add missing CSR 'State' field.
+
+### Removed
+N/A
+
+
 ## [v0.15.2] - 2023-11-06
 
 This release is quality of life. It mainly addresses things related to
