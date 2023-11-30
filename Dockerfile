@@ -2,7 +2,7 @@
 # docker build . --build-arg=BACKEND_VERSION=v0.8.0 --build-arg=FRONTEND_VERSION=v0.8.0 -t legocerthub:v0.8.0
 
 # example run
-# docker run -d --name legocerthub -v ./data:/app/data -p 4050:4050 -p 4055:4055 -p 4060:4060 -p 4065:4065 ghcr.io/gregtwallace/legocerthub:latest
+# docker run -d --name legocerthub -v ./data:/app/data -p 4050:4050 -p 4055:4055 -p 4060:4060 -p 4065:4065 -p 4070:4070 ghcr.io/gregtwallace/legocerthub:latest
 
 # Versions - keep in sync with build_releases.yml
 ARG ALPINE_VERSION=3.17
@@ -66,9 +66,15 @@ RUN sh -c "mkdir /app/data"
 # Note: Do not disable http redirect once https is configured or healthcheck will break
 HEALTHCHECK CMD wget --no-verbose --tries=1 --spider --no-check-certificate http://localhost:4050/legocerthub/api/health || exit 1
 
-EXPOSE 4050/tcp
+# http / https server
+EXPOSE 4050/tcp 
 EXPOSE 4055/tcp
+
+# http challenge server
 EXPOSE 4060/tcp
+
+# pprof http / https
 EXPOSE 4065/tcp
+EXPOSE 4070/tcp
 
 CMD /app/lego-linux-amd64
