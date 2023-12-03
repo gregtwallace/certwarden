@@ -1,5 +1,61 @@
 # LeGo CertHub Changelog
 
+## [v0.16.1] - 2023-12-03
+
+A laundry list of fixes and improvements.
+
+Note: The config schema will update from 2 to 3 due to change in the
+pprof port config variable.
+
+### Added
+- Add exponential backoff and retry for a number of functions (acme 
+  directory refresh, dns record checking, acme order processing and
+  challenge solving).
+- Add more detailed error for when actions run with an empty acme
+  directory (i.e. the directory url is currently failing).
+- Add automatic config backup before writing automated schema updates.
+- Add automatic db backup before writing automated schema updates.
+- Add security headers and access logging to pprof server.
+
+### Changed / Improved
+- Improve acme post signed debug logging to be more helpful in the 
+  event troubleshooting is needed. Logging now occurs of items before
+  they are encoded (and thus not easily readable by a human). Log
+  unencoded payload and destination, indent server responses before
+  logging, and add logging for csr common name and dns name on finalize
+  action.
+- Make acme error type more straightforward.
+- Improve acme post signed logic.
+- Improve order fulfillment logic.
+- Cap order fulfillment at 2 hours before failing (instead of a set
+  number of loops through the logic).
+- Do not allow order actions if the certificate form above is change.
+  This is intended to prevent accidentally doing an action with stale
+  (unsaved) data.
+
+### Fixed
+- Fix pprof with HSTS header by having pprof also run in https mode
+  when server has a valid cert. As a result, config now has a 
+  separate port option for http and https. Also add the new default
+  port to Docker files.
+- Directory refresh edge case that could result in double refresh.
+- Ensure app doesn't shutdown before challenge record deprovisioning
+  is complete.
+- Use proper errors Is and As instead of assertions and plain
+  comparisons.
+- Use proper error types for error comparisons (e.g. Cloudflare 
+  dns record already exists error and dns check error is not found).
+- Fix default permissions on db when creating new.
+- Fix frontend cert revoke button color.
+- Fix showing a priority on idle workers on the frontend. Priority 
+  should be blank since there is no job.
+- Fix Place New Order button not being disabled during an action.
+
+### Removed
+- Remove redirect to frontend root on login timeout. This was added in
+  the last update and is just kind of annoying without much benefit.
+
+
 ## [v0.16.0] - 2023-11-25
 
 The frontend has been completely updated to TypeScript with full type
