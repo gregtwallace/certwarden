@@ -1,5 +1,36 @@
 # LeGo CertHub Changelog
 
+## [v0.16.2] - 2023-12-05
+
+> **Warning**
+> This release fixes a security issue where the wrong permissions 
+> were set on the database and config files. Please manually verify 
+> your ./data/config.yaml and ./data/lego-certhub.db are set to 
+> 0600 (RW for owner only).
+
+Release to address the security issue in the warning and ensure files 
+have the proper permissions set on creation.
+
+Also a doc fix and install script fix.
+
+### Added
+N/A
+
+### Changed / Improved
+N/A
+
+### Fixed
+- Fix security issue where db and config might not be created with 
+  the proper permissions (0600).
+- Fix Linux install script. Empty config file causes an error so just 
+  let LeGo create the file on first run.
+- Update config example, defaults, and change log to include info 
+  about the pprof change in the last release (oops, forgot).
+
+### Removed
+N/A
+
+
 ## [v0.16.1] - 2023-12-03
 
 A laundry list of fixes and improvements.
