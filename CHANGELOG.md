@@ -1,5 +1,47 @@
 # LeGo CertHub Changelog
 
+## [v0.16.3] - 2023-12-13
+
+> [!CAUTION]
+> You need to upgrade to this release **IMMEDIATELY** if you are running 
+> version 0.15.1 through 0.16.2. These versions contain a critical 
+> security flaw which potentially allowed unauthorized access to private 
+> keys.
+
+The sole change in this release is addressing a critical security flaw.
+
+Depending on the sensitivity of your environment, the most secure action 
+after updating your version is to revoke all your certificates, rotate all 
+of your account private keys, and reissue all of your certificates with 
+new keys.
+
+If you're just running a home lab or have access denial measures in 
+place to prevent access to your server, this is almost certainly overkill. 
+I have been running these versions too and all I am doing is rotating 
+my account keys as an extra precaution.
+
+You can also manually review your logs between instllation of 0.15.1 
+and now to see if the keys were actually downloaded by an unauthorized 
+client.
+
+This vulnerability did not allow access to any other sensitive 
+information such as the config file, API keys, etc. Only the download of 
+private keys was impacted.
+
+### Added
+N/A
+
+### Changed / Improved
+N/A
+
+### Fixed
+- Fix critical security vulnerability that allowed unauthenticated 
+  clients to download sensitive files.
+
+### Removed
+N/A
+
+
 ## [v0.16.2] - 2023-12-05
 
 > **Warning**
