@@ -1,5 +1,46 @@
 # LeGo CertHub Changelog
 
+## [v0.17.0] - 2023-12-20
+
+This release adds backup functionality. It also adds the ability to run 
+a script on the server after the succesful completion of certificate 
+creation or renewal.
+
+### Added
+- Add backup functionality both to store locally on disc and to download 
+  to client. Automatic backups are enabled by default but backup settings 
+  can be changed in the config file. See the config example, change log, 
+  and default for more info.
+- Add post-processing script options to certificate. If you want to push 
+  new certificates to clients you can use a script on the LeGo server to 
+  do so and specify the script path and environment variables in the 
+  certificate settings.
+- Add post-processing button to certificates' orders. Useful for testing 
+  post processing is working without having to repeatedly order new 
+  certificates. This can also be used to rollback to previous orders, if 
+  needed.
+
+### Changed / Improved
+- Relocate db and config file to ./app sub folder of main data folder. 
+  Files will be moved automatically from the previous location.
+- Cloudlare now permits wrong config. This is so the app still starts 
+  even if the internet is down. To compensate, log messages are clear in 
+  the logs to highlight the problem.
+- Allow non-existent scripts in dns01manual method. This is to allow 
+  configuration before the script is in the folder and also to avoid 
+  failures to start if a file gets moved. Errors will be logged 
+  accordingly.
+- Make grids on front end look a little nicer.
+
+### Fixed
+- Fix frontend idle logout. The timer was not properly resetting so early 
+  timeout would trigger.
+
+### Removed
+- Remove notice about Let's Encrypt on the ACME Servers page. Support is 
+  more general now, so no need to warn.
+
+
 ## [v0.16.3] - 2023-12-13
 
 > [!CAUTION]
