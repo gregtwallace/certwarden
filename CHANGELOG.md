@@ -1,5 +1,15 @@
 # LeGo CertHub Changelog
 
+## [v0.17.1] - 2023-12-21
+
+Minor fixes to the prior release.
+
+### Fixed
+- Ensure backup folder gets created.
+- Fix possible hang of shutdown during failed backup waiting to retry.
+- Fix post processing logging so it is more clear what's going on.
+
+
 ## [v0.17.0] - 2023-12-20
 
 This release adds backup functionality. It also adds the ability to run 
