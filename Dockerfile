@@ -64,7 +64,7 @@ RUN sh -c "mkdir /app/data"
 # defer empty config file generation to LeGo on first run (if not manually made by user prior)
 
 # Note: Do not disable http redirect once https is configured or healthcheck will break
-HEALTHCHECK CMD wget --no-verbose --tries=1 --spider --no-check-certificate http://localhost:4050/legocerthub/api/health || exit 1
+HEALTHCHECK CMD curl --silent --output /dev/null --fail http://localhost:4050/legocerthub/api/health || exit 1
 
 # http / https server
 EXPOSE 4050/tcp 
