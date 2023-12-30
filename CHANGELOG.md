@@ -1,5 +1,15 @@
 # LeGo CertHub Changelog
 
+## [v0.17.2] - 2023-12-30
+
+Minor fixes.
+
+### Fixed
+- Fix spawning of zombie `ssl_client` process in docker container.
+- Fix label on private key API Key showing as `old` even though it is the 
+  only API Key.
+
+
 ## [v0.17.1] - 2023-12-21
 
 Minor fixes to the prior release.
