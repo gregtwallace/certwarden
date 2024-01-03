@@ -1,5 +1,22 @@
 # LeGo CertHub Changelog
 
+## [v0.17.3] - 2024-01-02
+
+Minor fixes.
+
+### Added
+- Add ability to specify different provider(s) for subdomains. This allows 
+  provider A to service example.com but use provider B for sub.example.com.
+
+### Fixed
+- Fix nil deref during automatic backup of app prior to config file version 
+  upgrade.
+- Fix mismatch of domain to provider in case where domains have overlapping 
+  names (e.g. testexample.com would have matched to example.com).
+- Several possible CVEs addressed via dependency updates and Go version 
+  update to 1.21.5.
+
+
 ## [v0.17.2] - 2023-12-30
 
 Minor fixes.
