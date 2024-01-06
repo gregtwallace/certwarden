@@ -1,5 +1,47 @@
 # LeGo CertHub Changelog
 
+## [v0.18.0] - 2024-01-05
+
+This release is pretty beefy with a number of significant code changes. Of 
+most interest to users is the addition of support for EVEN MORE dns providers 
+thanks to the integration of go-acme/lego.
+
+DNS providers supported by the new provider option: 
+https://go-acme.github.io/lego/dns/
+
+I'm also working on a client container that can receive certificate updates 
+and restart designated docker containers (so they pick up new certs). The 
+code for the client is available at 
+https://github.com/gregtwallace/legocerthub-client 
+but builds aren't yet published and use is not yet recommended unless you 
+really want to live on the bleeding edge.
+
+### Added
+- Add go-acme le-go provider type. This adds even more dns provider options.
+- Add LeGo Client post processing option. Causes the db to upgrade to user 
+  version 4. The client is still under development and compiled versions are 
+  not yet posted.
+
+### Fixed
+- Fix possible provider update having a nil-deref if sending API payload 
+  without a config.
+- Fix expiration check when trying to manually run post-processing. The wrong 
+  expiration was previously being used causing post processing to fail if the 
+  order was over ~1 week old.
+- Fix logging during challenge checking for valid/invalid. There was a bad
+  variable.
+- Update some dependencies to address possible vulnerabilities.
+
+### Changed / Improved
+- Decoupled domains from provider configs. Providers do not need knowledge of 
+  the domains. No changes to the config.yaml file though, this was just some 
+  code cleanup.
+- Simplify provider manager code a little bit by getting rid of an unneeded
+  map.
+- Rollback cloudflare api package as a test to observe impact in pprof. This 
+  should have no user facing impact.
+
+
 ## [v0.17.3] - 2024-01-02
 
 Minor fixes.
