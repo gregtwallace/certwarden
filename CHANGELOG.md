@@ -1,5 +1,14 @@
 # LeGo CertHub Changelog
 
+## [v0.18.1] - 2024-01-06
+
+Minor fixes to prior release.
+
+### Fixed
+- Fix backend post to LeGo client.
+- Fix missing field error on frontend.
+
+
 ## [v0.18.0] - 2024-01-05
 
 This release is pretty beefy with a number of significant code changes. Of 
