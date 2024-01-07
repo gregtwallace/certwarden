@@ -2,7 +2,7 @@
 # docker build . --build-arg=BACKEND_VERSION=v0.8.0 --build-arg=FRONTEND_VERSION=v0.8.0 -t legocerthub:v0.8.0
 
 # example run
-# docker run -d --name legocerthub -v ./data:/app/data -p 4050:4050 -p 4055:4055 -p 4060:4060 -p 4065:4065 -p 4070:4070 ghcr.io/gregtwallace/legocerthub:latest
+# docker run -d --name legocerthub -e TZ=Europe/Stockholm -v ./data:/app/data -p 4050:4050 -p 4055:4055 -p 4060:4060 -p 4065:4065 -p 4070:4070 ghcr.io/gregtwallace/legocerthub:latest
 
 # Versions - keep in sync with build_releases.yml
 ARG ALPINE_VERSION=3.17
@@ -47,6 +47,9 @@ RUN apk add bash
 RUN apk add curl
 RUN apk add openssl
 RUN mkdir -p /root/.acme.sh
+
+# timezone support
+RUN apk add --no-cache tzdata
 
 # copy app
 COPY --from=backend_build /src/lego-linux-amd64 .
