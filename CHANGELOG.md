@@ -1,5 +1,20 @@
 # LeGo CertHub Changelog
 
+## [v0.18.2] - 2024-01-11
+
+Minor updates.
+
+### Added
+- Add new API route to download key, cert, and certchain all in one file.
+- Add ability to view all DNS names on any given order.
+- Docker: Add timezone support (use the TZ environment variable).
+
+### Changed
+- Change key name display on a given order to show an icon instead of the 
+  long name, with a tooltip containing the key name. Clicking the icon 
+  still navigates to the key.
+
+
 ## [v0.18.1] - 2024-01-06
 
 Minor fixes to prior release.
