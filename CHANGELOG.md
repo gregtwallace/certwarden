@@ -1,5 +1,28 @@
 # LeGo CertHub Changelog
 
+## [v0.18.3] - 2024-02-02
+
+Minor updates.
+
+### Added
+- Add post processing variable names for custom environment variables. Instead
+  of being forced to use `LEGO_CERTIFICATE_COMMON_NAME` the string 
+  {{CERTIFICATE_COMMON_NAME}} can be used as a value in a custom named
+  variable. This allows more versatility in post processing.
+
+### Fixed
+- Fix issue where time might print strangely in log message about 
+  auto-ordering.
+- Fix wrong tooltip over the ignore update X button.
+- Fix frontend form validation on provider domains. Wildcards are not allowed
+  on providers as the domain is already assumed to include all subdomains, 
+  including wildcard subdomains. The backend already properly validated this
+  but the frontend did not.
+
+### Changed
+- Update Vite to 4.5.2.
+
+
 ## [v0.18.2] - 2024-01-11
 
 Minor updates.
