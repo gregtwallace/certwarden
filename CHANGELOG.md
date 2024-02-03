@@ -1,6 +1,6 @@
 # LeGo CertHub Changelog
 
-## [v0.18.3] - 2024-02-02
+## [v0.18.4] - 2024-02-02
 
 Minor updates.
 
@@ -9,6 +9,7 @@ Minor updates.
   of being forced to use `LEGO_CERTIFICATE_COMMON_NAME` the string 
   {{CERTIFICATE_COMMON_NAME}} can be used as a value in a custom named
   variable. This allows more versatility in post processing.
+- Add ability to run binaries in post process, in addition to scripts.
 
 ### Fixed
 - Fix issue where time might print strangely in log message about 
