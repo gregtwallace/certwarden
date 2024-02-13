@@ -5,7 +5,7 @@
 # docker run -d --name legocerthub -e TZ=Europe/Stockholm -v ./data:/app/data -p 4050:4050 -p 4055:4055 -p 4060:4060 -p 4065:4065 -p 4070:4070 ghcr.io/gregtwallace/legocerthub:latest
 
 # Versions - keep in sync with build_releases.yml
-ARG ALPINE_VERSION=3.17
+ARG ALPINE_VERSION=3.19
 ARG GO_VERSION=1.22.0
 ARG NODE_VERSION=18.19.0
 # https://hub.docker.com/_/alpine
