@@ -35,7 +35,7 @@ WORKDIR /
 RUN apk add git gcc musl-dev && \
     git clone --depth 1 --branch "${BACKEND_VERSION}" https://github.com/gregtwallace/legocerthub-backend.git /src && \
     cd /src && \
-    go build -o ./lego-linux-amd64 ./cmd/api-server
+    go build -o ./lego-server ./cmd/api-server
 
 
 FROM alpine:${ALPINE_VERSION}
@@ -52,7 +52,7 @@ RUN mkdir -p /root/.acme.sh
 RUN apk add --no-cache tzdata
 
 # copy app
-COPY --from=backend_build /src/lego-linux-amd64 .
+COPY --from=backend_build /src/lego-server .
 COPY --from=backend_build /src/config.default.yaml .
 COPY --from=backend_build /src/config.example.yaml .
 COPY --from=backend_build /src/config.changelog.md .
@@ -80,4 +80,4 @@ EXPOSE 4060/tcp
 EXPOSE 4065/tcp
 EXPOSE 4070/tcp
 
-CMD /app/lego-linux-amd64
+CMD /app/lego-server
