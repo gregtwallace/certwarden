@@ -18,26 +18,26 @@ jobs:
 
     steps:
       - name: Checkout Main Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: gregtwallace/legocerthub
           ref: ${{ env.GITHUB_REF }}
           fetch-depth: 0
 
       - name: Save README
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: README.md
           path: ./README.md
 
       - name: Save LICENSE
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: LICENSE.md
           path: ./LICENSE.md
 
       - name: Save CHANGELOG
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: CHANGELOG.md
           path: ./CHANGELOG.md
@@ -47,14 +47,14 @@ jobs:
 
     steps:
       - name: Checkout Frontend Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: gregtwallace/legocerthub-frontend
           ref: ${{ env.GITHUB_REF }}
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '${{ env.NODE_VERSION }}'
           cache: 'npm'
@@ -66,14 +66,14 @@ jobs:
           CI: false
 
       - name: Archive npm failure logs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: npm-logs
           path: ~/.npm/_logs
 
       - name: Save Compiled React App
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: frontend_build
           path: ./dist
@@ -82,38 +82,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Backend Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: gregtwallace/legocerthub-backend
           ref: ${{ env.GITHUB_REF }}
           fetch-depth: 0
 
       - name: Save Default Config
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: config.default.yaml
           path: ./config.default.yaml
 
       - name: Save Example Config
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: config.example.yaml
           path: ./config.example.yaml
 
       - name: Save Config Changelog
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: config.changelog.md
           path: ./config.changelog.md
 
       - name: Save Scripts (Linux)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: scripts-linux
           path: ./scripts/linux
 
       - name: Save Scripts (Windows)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: scripts-windows
           path: ./scripts/windows
@@ -122,7 +122,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Backend Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: gregtwallace/legocerthub-backend
           ref: ${{ env.GITHUB_REF }}
@@ -135,7 +135,7 @@ jobs:
         run: sudo apt-get -y install gcc-aarch64-linux-gnu
 
       - name: Set up Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version: '${{ env.GO_VERSION }}'
 
@@ -148,7 +148,7 @@ jobs:
           CGO_ENABLED: 1
 
       - name: Save Compiled Binary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: lego-linux-arm64
           path: ./lego-linux-arm64
@@ -157,14 +157,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Backend Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: gregtwallace/legocerthub-backend
           ref: ${{ env.GITHUB_REF }}
           fetch-depth: 0
 
       - name: Set up Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version: '${{ env.GO_VERSION }}'
 
@@ -176,7 +176,7 @@ jobs:
           CGO_ENABLED: 1
 
       - name: Save Compiled Binary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: lego-linux-amd64
           path: ./lego-linux-amd64
@@ -185,14 +185,14 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout Backend Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: gregtwallace/legocerthub-backend
           ref: ${{ env.GITHUB_REF }}
           fetch-depth: 0
 
       - name: Set up Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version: '${{ env.GO_VERSION }}'
 
@@ -204,7 +204,7 @@ jobs:
           CGO_ENABLED: 1
 
       - name: Save Compiled Binary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: lego-windows-amd64
           path: ./lego-windows-amd64.exe
@@ -224,61 +224,61 @@ jobs:
         run: mkdir ./release
 
       - name: Download Frontend
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: frontend_build
           path: ./release/frontend_build
 
       - name: Download Backend Default Config
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: config.default.yaml
           path: ./release
 
       - name: Download Backend Example Config
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: config.example.yaml
           path: ./release
 
       - name: Download Config Changelog
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: config.changelog.md
           path: ./release
 
       - name: Download Linux Scripts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: scripts-linux
           path: ./release/scripts
 
       - name: Download Backend Binary
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: lego-linux-arm64
           path: ./release
 
       - name: Download README
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: README.md
           path: ./release
 
       - name: Download LICENSE
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: LICENSE.md
           path: ./release
 
       - name: Download CHANGELOG
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: CHANGELOG.md
           path: ./release
 
       - name: Save Release
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: legocerthub_linux_arm64
           path: ./release
@@ -298,61 +298,61 @@ jobs:
         run: mkdir ./release
 
       - name: Download Frontend
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: frontend_build
           path: ./release/frontend_build
 
       - name: Download Backend Default Config
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: config.default.yaml
           path: ./release
 
       - name: Download Backend Example Config
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: config.example.yaml
           path: ./release
 
       - name: Download Config Changelog
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: config.changelog.md
           path: ./release
 
       - name: Download Linux Scripts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: scripts-linux
           path: ./release/scripts
 
       - name: Download Backend Binary
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: lego-linux-amd64
           path: ./release
 
       - name: Download README
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: README.md
           path: ./release
 
       - name: Download LICENSE
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: LICENSE.md
           path: ./release
 
       - name: Download CHANGELOG
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: CHANGELOG.md
           path: ./release
 
       - name: Save Release
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: legocerthub_linux_amd64
           path: ./release
@@ -372,61 +372,61 @@ jobs:
         run: mkdir ./release
 
       - name: Download Frontend
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: frontend_build
           path: ./release/frontend_build
 
       - name: Download Backend Default Config
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: config.default.yaml
           path: ./release
 
       - name: Download Backend Example Config
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: config.example.yaml
           path: ./release
 
       - name: Download Config Changelog
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: config.changelog.md
           path: ./release
 
       - name: Download Windows Scripts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: scripts-windows
           path: ./release/scripts
 
       - name: Download Backend Binary
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: lego-windows-amd64
           path: ./release
 
       - name: Download README
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: README.md
           path: ./release
 
       - name: Download LICENSE
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: LICENSE.md
           path: ./release
 
       - name: Download CHANGELOG
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: CHANGELOG.md
           path: ./release
 
       - name: Save Release
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: legocerthub_windows_amd64
           path: ./release
