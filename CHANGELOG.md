@@ -1,5 +1,28 @@
 # LeGo CertHub Changelog
 
+## [v0.19.0] - 2024-02-17
+
+This version adds help links to the official documentation on most pages 
+of the frontend app. There are also a couple of minor bug fixes and 
+dependency updates.
+
+### Added
+- Help links on most frontend pages.
+
+### Fixed
+- Fix possible memory leaks from time.After() calls.
+- Fix missing field error related to go-acme le-go.
+- Update follow-redirect package to fix CVE-2023-26159.
+
+### Changed
+- Update to Go 1.22.
+- Update to Node 18.19.0.
+- Update to math/rand/v2 standard library.
+- Update github actions fo Node.js 20 versions.
+- Update docker container to Alpine 3.19.
+- Shorten application binary name in docker container.
+
+
 ## [v0.18.4] - 2024-02-02
 
 Minor updates.
