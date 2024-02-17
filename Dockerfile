@@ -30,6 +30,8 @@ FROM golang:${GO_VERSION}-alpine${ALPINE_VERSION} AS backend_build
 ARG BACKEND_VERSION
 ARG CGO_ENABLED=1
 
+ENV CGO_CFLAGS="-D_LARGEFILE64_SOURCE"
+
 WORKDIR /
 
 RUN apk add git gcc musl-dev && \
