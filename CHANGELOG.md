@@ -1,5 +1,14 @@
 # LeGo CertHub Changelog
 
+## [v0.19.1] - 2024-02-18
+
+Minor bug fix.
+
+### Fixed
+- Fix broken 'submit' button on edit account page. It looks like this
+  was introduced during the conversion to TypeScript.
+
+
 ## [v0.19.0] - 2024-02-17
 
 This version adds help links to the official documentation on most pages 
