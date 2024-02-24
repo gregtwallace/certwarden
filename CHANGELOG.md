@@ -1,5 +1,13 @@
 # LeGo CertHub Changelog
 
+## [v0.19.2] - 2024-02-24
+
+Minor bug fix.
+
+### Fixed
+- Fix safe map read which caused bug in http-01 internal server.
+
+
 ## [v0.19.1] - 2024-02-18
 
 Minor bug fix.
