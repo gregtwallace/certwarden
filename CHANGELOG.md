@@ -1,5 +1,10 @@
 # LeGo CertHub Changelog
 
+## [v0.20.1] - 2024-03-01
+
+Hotfix to prior version.
+
+
 ## [v0.20.0] - 2024-02-29
 
 This release breaks up the work being done to fulfill certificates and the
