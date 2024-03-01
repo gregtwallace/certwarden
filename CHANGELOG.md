@@ -1,5 +1,42 @@
 # LeGo CertHub Changelog
 
+## [v0.20.0] - 2024-02-29
+
+This release breaks up the work being done to fulfill certificates and the
+work that is done after they are fulfilled (post processing). This is done
+to make it more clear what work is being done. It is also with an eye to
+potential future functionality to allow canceling and rescheduling of jobs.
+I have not yet decided what to do in that regard though.
+
+It also adds an Extra Extensions option to certificates' CSRs. Certain ACME 
+Servers may support Extra Extensions on certificates and this allows the
+user to specify desired extensions. There is a built-in button to add the
+OCSP Must Staple extension. Note: Servers may or may not honor extensions
+on the CSR and if they don't honor them, they may still continue and issue
+a certificate without them. This is advanced functionality and your mileage
+may vary. You should confirm what your ACME Server does and does not 
+support and verify that the resulting certificates that are produced 
+actually match your expectations.
+
+### Added
+- Add separate post processing work queue to clearly separate this work
+  from certificate order work.
+- Add support for additional certificate extensions. There is also a 
+  button to add the OCSP Must Staple extension.
+- Add help link to the CSR section of certificates.
+
+### Fixed
+- Fix missing field in form field func in frontend code.
+- Fix integer checking on frontend. Prevents things like page number `2.5`
+  from being interpreted as `2`.
+
+### Changed
+- Move SafeMap to its own package.
+- Some minor code cleanup in a couple areas removing unused vars / code.
+- Don't include blank CSR fields as part of the CSR. Reduces size of the
+  CSR that is transmitted to the ACME Server.
+
+
 ## [v0.19.2] - 2024-02-24
 
 Minor bug fix.
