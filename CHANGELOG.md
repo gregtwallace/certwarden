@@ -1,5 +1,21 @@
 # LeGo CertHub Changelog
 
+## [v0.20.2] - 2024-03-05
+
+Minor release that adds OCSP stapling and fixes a graceful shutdown bug.
+
+### Added
+- Add OCSP stapling to the certificate that LeGo serves to clients 
+  connecting to it.
+
+### Fixed
+- Fix auth session cleaning service. Timer had a bug that stopped it from
+  running and also caused graceful shutdown to hang.
+
+### Removed
+- Removed some unused dead code and vars.
+
+
 ## [v0.20.1] - 2024-03-01
 
 Hotfix to prior version.
