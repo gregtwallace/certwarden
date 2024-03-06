@@ -1,5 +1,10 @@
 # LeGo CertHub Changelog
 
+## [v0.20.3] - 2024-03-06
+
+Update to Go 1.22.1, which includes some security fixes.
+
+
 ## [v0.20.2] - 2024-03-05
 
 Minor release that adds OCSP stapling and fixes a graceful shutdown bug.
