@@ -1,5 +1,40 @@
 # LeGo CertHub Changelog
 
+## [v0.20.4] - 2024-03-25
+
+Minor updates and fixes.
+
+I plan to rename this project. Please let me know if you have any ideas!
+See: https://community.letsencrypt.org/t/new-client-lego-certhub/215010
+
+### Added
+- Add basic validation to frontend when editing envrionment variables, as
+  well as an error message specifying the correct format.
+
+### Fixed
+- Fix email validation on frontend (thanks @oliverl-21).
+
+### Changed
+- Overhaul environment variables for providers and certificates. These can
+  now have quotes around the name, value, both, or neither and still work
+  correctly. This was done as this format is common to other tools when
+  setting these.
+- Certain fields are no longer redacted when outputted (e.g. API Keys).
+  They are still redacted in the logs though.
+- The go-acme provider will now use the system default DNS server(s)
+  instead of Google (if they can be determined, which they should be on all
+  OSes).
+- Update go jose, protobuf, and do go mod tidy.
+- Update axios and follow-redirects.
+- Update some func names on backend pem output. This is in preparation to
+  add output in other formats (e.g., pfx).
+- Update frontend copyright notice to 2024.
+
+### Removed
+- Removed provider config preview when viewing the page that shows all
+  providers. Edit a provider to see the full config.
+
+
 ## [v0.20.3] - 2024-03-06
 
 Update to Go 1.22.1, which includes some security fixes.
