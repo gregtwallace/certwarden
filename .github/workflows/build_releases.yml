@@ -20,7 +20,7 @@ jobs:
       - name: Checkout Main Repo
         uses: actions/checkout@v4
         with:
-          repository: gregtwallace/legocerthub
+          repository: gregtwallace/certwarden
           ref: ${{ env.GITHUB_REF }}
           fetch-depth: 0
 
@@ -49,7 +49,7 @@ jobs:
       - name: Checkout Frontend Repo
         uses: actions/checkout@v4
         with:
-          repository: gregtwallace/legocerthub-frontend
+          repository: gregtwallace/certwarden-frontend
           ref: ${{ env.GITHUB_REF }}
           fetch-depth: 0
 
@@ -84,7 +84,7 @@ jobs:
       - name: Checkout Backend Repo
         uses: actions/checkout@v4
         with:
-          repository: gregtwallace/legocerthub-backend
+          repository: gregtwallace/certwarden-backend
           ref: ${{ env.GITHUB_REF }}
           fetch-depth: 0
 
@@ -124,7 +124,7 @@ jobs:
       - name: Checkout Backend Repo
         uses: actions/checkout@v4
         with:
-          repository: gregtwallace/legocerthub-backend
+          repository: gregtwallace/certwarden-backend
           ref: ${{ env.GITHUB_REF }}
           fetch-depth: 0
 
@@ -140,7 +140,7 @@ jobs:
           go-version: '${{ env.GO_VERSION }}'
 
       - name: Build
-        run: go build -o ./lego-linux-arm64 -v ./cmd/api-server
+        run: go build -o ./certwarden-linux-arm64 -v ./cmd/api-server
         env:
           GOOS: linux
           GOARCH: arm64
@@ -150,8 +150,8 @@ jobs:
       - name: Save Compiled Binary
         uses: actions/upload-artifact@v4
         with:
-          name: lego-linux-arm64
-          path: ./lego-linux-arm64
+          name: certwarden-linux-arm64
+          path: ./certwarden-linux-arm64
 
   build-backend-linux-amd64:
     runs-on: ubuntu-latest
@@ -159,7 +159,7 @@ jobs:
       - name: Checkout Backend Repo
         uses: actions/checkout@v4
         with:
-          repository: gregtwallace/legocerthub-backend
+          repository: gregtwallace/certwarden-backend
           ref: ${{ env.GITHUB_REF }}
           fetch-depth: 0
 
@@ -169,7 +169,7 @@ jobs:
           go-version: '${{ env.GO_VERSION }}'
 
       - name: Build
-        run: go build -o ./lego-linux-amd64 -v ./cmd/api-server
+        run: go build -o ./certwarden-linux-amd64 -v ./cmd/api-server
         env:
           GOOS: linux
           GOARCH: amd64
@@ -178,8 +178,8 @@ jobs:
       - name: Save Compiled Binary
         uses: actions/upload-artifact@v4
         with:
-          name: lego-linux-amd64
-          path: ./lego-linux-amd64
+          name: certwarden-linux-amd64
+          path: ./certwarden-linux-amd64
 
   build-backend-windows-amd64:
     runs-on: windows-latest
@@ -187,7 +187,7 @@ jobs:
       - name: Checkout Backend Repo
         uses: actions/checkout@v4
         with:
-          repository: gregtwallace/legocerthub-backend
+          repository: gregtwallace/certwarden-backend
           ref: ${{ env.GITHUB_REF }}
           fetch-depth: 0
 
@@ -197,7 +197,7 @@ jobs:
           go-version: '${{ env.GO_VERSION }}'
 
       - name: Build
-        run: go build -o ./lego-windows-amd64.exe -v ./cmd/api-server
+        run: go build -o ./certwarden-windows-amd64.exe -v ./cmd/api-server
         env:
           GOOS: windows
           GOARCH: amd64
@@ -206,8 +206,8 @@ jobs:
       - name: Save Compiled Binary
         uses: actions/upload-artifact@v4
         with:
-          name: lego-windows-amd64
-          path: ./lego-windows-amd64.exe
+          name: certwarden-windows-amd64
+          path: ./certwarden-windows-amd64.exe
 
   release-file-linux-arm64:
     needs:
@@ -256,7 +256,7 @@ jobs:
       - name: Download Backend Binary
         uses: actions/download-artifact@v4
         with:
-          name: lego-linux-arm64
+          name: certwarden-linux-arm64
           path: ./release
 
       - name: Download README
@@ -280,7 +280,7 @@ jobs:
       - name: Save Release
         uses: actions/upload-artifact@v4
         with:
-          name: legocerthub_linux_arm64
+          name: certwarden_linux_arm64
           path: ./release
 
   release-file-linux-amd64:
@@ -330,7 +330,7 @@ jobs:
       - name: Download Backend Binary
         uses: actions/download-artifact@v4
         with:
-          name: lego-linux-amd64
+          name: certwarden-linux-amd64
           path: ./release
 
       - name: Download README
@@ -354,7 +354,7 @@ jobs:
       - name: Save Release
         uses: actions/upload-artifact@v4
         with:
-          name: legocerthub_linux_amd64
+          name: certwarden_linux_amd64
           path: ./release
 
   release-file-windows-amd64:
@@ -404,7 +404,7 @@ jobs:
       - name: Download Backend Binary
         uses: actions/download-artifact@v4
         with:
-          name: lego-windows-amd64
+          name: certwarden-windows-amd64
           path: ./release
 
       - name: Download README
@@ -428,5 +428,5 @@ jobs:
       - name: Save Release
         uses: actions/upload-artifact@v4
         with:
-          name: legocerthub_windows_amd64
+          name: certwarden_windows_amd64
           path: ./release

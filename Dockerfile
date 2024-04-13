@@ -1,8 +1,8 @@
 # example build:
-# docker build . --build-arg=BACKEND_VERSION=v0.8.0 --build-arg=FRONTEND_VERSION=v0.8.0 -t legocerthub:v0.8.0
+# docker build . --build-arg=BACKEND_VERSION=v0.8.0 --build-arg=FRONTEND_VERSION=v0.8.0 -t certwarden:v0.8.0
 
 # example run
-# docker run -d --name legocerthub -e TZ=Europe/Stockholm -v ./data:/app/data -p 4050:4050 -p 4055:4055 -p 4060:4060 -p 4065:4065 -p 4070:4070 ghcr.io/gregtwallace/legocerthub:latest
+# docker run -d --name certwarden -e TZ=Europe/Stockholm -v ./data:/app/data -p 4050:4050 -p 4055:4055 -p 4060:4060 -p 4065:4065 -p 4070:4070 ghcr.io/gregtwallace/certwarden:latest
 
 # Versions - keep in sync with build_releases.yml
 ARG ALPINE_VERSION=3.19
@@ -19,7 +19,7 @@ ARG FRONTEND_VERSION
 WORKDIR /
 
 RUN apk add git && \
-    git clone --depth 1 --branch "${FRONTEND_VERSION}" https://github.com/gregtwallace/legocerthub-frontend.git /src && \
+    git clone --depth 1 --branch "${FRONTEND_VERSION}" https://github.com/gregtwallace/certwarden-frontend.git /src && \
     cd /src && \
     npm clean-install && \
     npx vite build
@@ -35,9 +35,9 @@ ENV CGO_CFLAGS="-D_LARGEFILE64_SOURCE"
 WORKDIR /
 
 RUN apk add git gcc musl-dev && \
-    git clone --depth 1 --branch "${BACKEND_VERSION}" https://github.com/gregtwallace/legocerthub-backend.git /src && \
+    git clone --depth 1 --branch "${BACKEND_VERSION}" https://github.com/gregtwallace/certwarden-backend.git /src && \
     cd /src && \
-    go build -o ./lego-server ./cmd/api-server
+    go build -o ./certwarden ./cmd/api-server
 
 
 FROM alpine:${ALPINE_VERSION}
@@ -54,7 +54,7 @@ RUN mkdir -p /root/.acme.sh
 RUN apk add --no-cache tzdata
 
 # copy app
-COPY --from=backend_build /src/lego-server .
+COPY --from=backend_build /src/certwarden .
 COPY --from=backend_build /src/config.default.yaml .
 COPY --from=backend_build /src/config.example.yaml .
 COPY --from=backend_build /src/config.changelog.md .
@@ -66,10 +66,10 @@ COPY ./LICENSE.md .
 
 # make default data folder
 RUN sh -c "mkdir /app/data"
-# defer empty config file generation to LeGo on first run (if not manually made by user prior)
+# defer empty config file generation to Cert Warden on first run (if not manually made by user prior)
 
 # Note: Do not disable http redirect once https is configured or healthcheck will break
-HEALTHCHECK CMD curl --silent --output /dev/null --fail http://localhost:4050/legocerthub/api/health || exit 1
+HEALTHCHECK CMD curl --silent --output /dev/null --fail http://localhost:4050/certwarden/api/health || exit 1
 
 # http / https server
 EXPOSE 4050/tcp 
@@ -82,4 +82,4 @@ EXPOSE 4060/tcp
 EXPOSE 4065/tcp
 EXPOSE 4070/tcp
 
-CMD /app/lego-server
+CMD /app/certwarden

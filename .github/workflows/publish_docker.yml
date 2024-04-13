@@ -20,7 +20,7 @@ jobs:
       - name: Checkout Main Repo
         uses: actions/checkout@v4
         with:
-          repository: gregtwallace/legocerthub
+          repository: gregtwallace/certwarden
           ref: ${{ env.GITHUB_REF }}
           fetch-depth: 0
 
@@ -48,7 +48,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            gregtwallace/legocerthub
+            gregtwallace/certwarden
             ghcr.io/${{ github.repository }}
 
       - name: Build and push Docker image

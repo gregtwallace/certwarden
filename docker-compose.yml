@@ -1,9 +1,9 @@
 version: '3'
 
 services:
-  legocerthub:
-    container_name: legocerthub
-    image: ghcr.io/gregtwallace/legocerthub:latest
+  certwarden:
+    container_name: certwarden
+    image: ghcr.io/gregtwallace/certwarden:latest
     restart: unless-stopped
     ports:
       - 4050:4050 # server interface (http)

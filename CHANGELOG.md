@@ -1,4 +1,5 @@
-# LeGo CertHub Changelog
+# Cert Warden Changelog
+(Formerly LeGo CertHub)
 
 ## [v0.20.4] - 2024-03-25
 

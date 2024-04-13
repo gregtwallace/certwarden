@@ -1,29 +1,31 @@
-# LeGo Certhub
+# Cert Warden
+(Formerly LeGo CertHub)
+
 Centralized Certificate Management
 Conveniently Leverage Let&apos;s Encrypt to Secure Your Infrastructure
 
 
 ## More Information
-https://www.legocerthub.com/
+https://www.certwarden.com/
 
 
 ## Download
 Binary Releases
 
-https://github.com/gregtwallace/legocerthub/releases
+https://github.com/gregtwallace/certwarden/releases
 
 Docker Hub
 
-https://hub.docker.com/repository/docker/gregtwallace/legocerthub/general
+https://hub.docker.com/repository/docker/gregtwallace/certwarden/general
 
 GitHub Packages
 
-https://github.com/gregtwallace/legocerthub/pkgs/container/legocerthub
+https://github.com/gregtwallace/certwarden/pkgs/container/certwarden
 
 
 ## Sources
 Backend
-https://github.com/gregtwallace/legocerthub-backend
+https://github.com/gregtwallace/certwarden-backend
 
 Frontend
-https://github.com/gregtwallace/legocerthub-frontend
+https://github.com/gregtwallace/certwarden-frontend

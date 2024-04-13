@@ -4,10 +4,10 @@ $rootDir = Split-Path -Path $scriptDir -Parent
 $outDir = Join-Path -Path $scriptDir -ChildPath "/out"
 
 ## Backend
-Set-Location $rootDir/legocerthub-backend
+Set-Location $rootDir/certwarden-backend
 
 # Include config example
-Copy-Item -Path $rootDir/legocerthub-backend/config.default.yaml -Destination $outDir
+Copy-Item -Path $rootDir/certwarden-backend/config.default.yaml -Destination $outDir
 
 # Mandatory env flag for sqlite
 $env:CGO_ENABLED = 1
@@ -15,10 +15,10 @@ $env:CGO_ENABLED = 1
 # Windows x64
 $env:GOARCH = "amd64"
 $env:GOOS = "windows"
-go build -o $outDir/lego-windows-amd64.exe ./cmd/api-server
+go build -o $outDir/certwarden.exe ./cmd/api-server
 
 ## Frontend
-Set-Location $rootDir/legocerthub-frontend
+Set-Location $rootDir/certwarden-frontend
 npx vite build
 
 # remove old build
@@ -26,7 +26,7 @@ Remove-Item -Path $outDir/frontend_build -recurse
 New-Item -ItemType Directory -Force -Path $outDir/frontend_build
 
 # move to out
-Move-Item -Path $rootDir/legocerthub-frontend/dist/* -Destination $outDir/frontend_build
+Move-Item -Path $rootDir/certwarden-frontend/dist/* -Destination $outDir/frontend_build
 
 # Return to original path
 Set-Location $scriptDir
