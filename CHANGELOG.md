@@ -199,7 +199,7 @@ https://go-acme.github.io/lego/dns/
 I'm also working on a client container that can receive certificate updates 
 and restart designated docker containers (so they pick up new certs). The 
 code for the client is available at 
-https://github.com/gregtwallace/legocerthub-client 
+https://github.com/gregtwallace/certwarden-client 
 but builds aren't yet published and use is not yet recommended unless you 
 really want to live on the bleeding edge.
 
@@ -854,7 +854,7 @@ This version is mostly minor fixes.  Pprof support is also added.
 ### Fixed
 - Fix Cloudflare challenge method failing for domains where the zone has
   more than two parts (e.g. some-name.in.ua).
-  See: https://github.com/gregtwallace/legocerthub/issues/22
+  See: https://github.com/gregtwallace/certwarden/issues/22
 - Minor code cleanup (move an error, remove an export, and fix a typo).
 
 ### Removed
@@ -1272,7 +1272,7 @@ Backend
 - Fixed cookie to properly permit cross-origin refresh. If cross-origin is not
   configured, cookie SameSite is set to strict for added security.
 - Fixed inability for ACME Accounts secured by RSA key to validate DNS
-  challenges. (https://github.com/gregtwallace/legocerthub-backend/issues/1)
+  challenges. (https://github.com/gregtwallace/certwarden-backend/issues/1)
 
 Frontend
 - Fixed a path that was not properly updated when moving to Vite.
