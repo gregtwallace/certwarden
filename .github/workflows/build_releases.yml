@@ -140,7 +140,7 @@ jobs:
           go-version: '${{ env.GO_VERSION }}'
 
       - name: Build
-        run: go build -o ./certwarden-linux-arm64 -v ./cmd/api-server
+        run: go build -o ./certwarden -v ./cmd/api-server
         env:
           GOOS: linux
           GOARCH: arm64
@@ -151,7 +151,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: certwarden-linux-arm64
-          path: ./certwarden-linux-arm64
+          path: ./certwarden
 
   build-backend-linux-amd64:
     runs-on: ubuntu-latest
@@ -169,7 +169,7 @@ jobs:
           go-version: '${{ env.GO_VERSION }}'
 
       - name: Build
-        run: go build -o ./certwarden-linux-amd64 -v ./cmd/api-server
+        run: go build -o ./certwarden -v ./cmd/api-server
         env:
           GOOS: linux
           GOARCH: amd64
@@ -179,7 +179,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: certwarden-linux-amd64
-          path: ./certwarden-linux-amd64
+          path: ./certwarden
 
   build-backend-windows-amd64:
     runs-on: windows-latest
@@ -197,7 +197,7 @@ jobs:
           go-version: '${{ env.GO_VERSION }}'
 
       - name: Build
-        run: go build -o ./certwarden-windows-amd64.exe -v ./cmd/api-server
+        run: go build -o ./certwarden.exe -v ./cmd/api-server
         env:
           GOOS: windows
           GOARCH: amd64
@@ -207,7 +207,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: certwarden-windows-amd64
-          path: ./certwarden-windows-amd64.exe
+          path: ./certwarden.exe
 
   release-file-linux-arm64:
     needs:
