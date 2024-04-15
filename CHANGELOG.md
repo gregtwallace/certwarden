@@ -1,6 +1,64 @@
 # Cert Warden Changelog
 (Formerly LeGo CertHub)
 
+## [v0.21.0] - 2024-04-15
+
+LeGo CertHub has changed to Cert Warden! This was done to avoid confusion
+due to name overlap with another project. As part of this transition, a
+number of things changed. I made efforts to make this upgrade cause 
+little to no pain, but there are changes that could trip you up.
+
+> [!CAUTION]
+> You should not perform this updated in an unattended fashion. Something
+> might break and you may need to make tweaks. If you have problems, 
+> please open an issue or post on the forum.
+
+Compatibility Notes:
+- Names of binaries, install, and upgrade scripts have changed. This includes
+  the default paths and user name. If you're using a build outside of docker, 
+  you may need to update your local service to match the new file names. 
+  Review the changes in 
+  https://github.com/gregtwallace/certwarden-backend/blob/master/scripts/linux/install.sh
+  https://github.com/gregtwallace/certwarden-backend/blob/master/scripts/linux/upgrade.sh
+  and
+  https://github.com/gregtwallace/certwarden-backend/blob/master/scripts/linux/legocerthub.service
+- The Cert Warden Client route was changed. The server will attempt to
+  post to the old route if the new route 404'd.
+- The sqlite db was renamed to `appdata.db`. The old file should be 
+  automatically renamed on first start.
+- The default certificate name this app uses has changed from `legocerthub`
+  to `serverdefault`. The db version will be updated on first start and if
+  one named `legocerthub` exists, it will be renamed to `serverdefault`.
+- The basepath for the app and api changed from `/legocerthub` to 
+  `/certwarden`. Redirects are in place (for now) but you should update
+  clients ASAP. A warning will be logged on the server any time a legacy
+  path is accessed. The warning includes the IP of the client so you
+  can go fix it.
+- Log and backup filename prefixes were changed but the old files should
+  still be accessible and viewable as if they had the new 'correct' name.
+
+
+Most of the backwards compatibility bandages will be removed in a later
+version. Please update clients asap to avoid future issues.
+
+### Added
+N/A
+
+### Fixed
+N/A
+
+### Changed
+- Update to Vite 5 and use the new CSP injection feature (instead of the
+  custom implementation previously used).
+- Update to Go 1.22.1 and Node 18.20.2.
+- Update a number of other dependencies.
+- DB schema version changed from 5 to 6. The schema didn't actually change
+  but this was done to help with the name change migration.
+
+### Removed
+N/A
+
+
 ## [v0.20.4] - 2024-03-25
 
 Minor updates and fixes.
