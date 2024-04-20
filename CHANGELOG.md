@@ -1,6 +1,31 @@
 # Cert Warden Changelog
 (Formerly LeGo CertHub)
 
+## [v0.21.1] - 2024-04-19
+
+Minor updates and fixes.
+
+If you are coming from <0.21.0, please read the warnings on 0.21.0.
+
+### Added
+- Add ability to use = (equal sign) in environment param values.
+
+### Fixed
+- Fix environment param name and value checking. Be more strict about
+  what is allowed in a param name. Make the frontend logic match the
+  backend logic exactly.
+- Fix environment params slice not properly stripping quotes.
+- Fix time parsing of old backup file names. (If you saw a bunch of
+  `warn` messages in your logs about backups and times, this is the
+  fix.)
+
+### Changed
+N/A
+
+### Removed
+N/A
+
+
 ## [v0.21.0] - 2024-04-15
 
 LeGo CertHub has changed to Cert Warden! This was done to avoid confusion
