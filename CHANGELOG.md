@@ -1,6 +1,41 @@
 # Cert Warden Changelog
 (Formerly LeGo CertHub)
 
+## [v0.21.2] - 2024-05-07
+
+Minor updates and fixes.
+
+If you are coming from <0.21.0, please read the warnings on 0.21.0.
+
+### Added
+- Always show Account URL. Some ACME providers (like Let's Encrypt)
+  allow CAA records that specify specific account(s) that are allowed
+  to issue certificates. Make the account URL always visible to make
+  it easier to generate such records.
+- Add refresh Account button on the edit account page. The button
+  queries the ACME server for the current state of the account and
+  saves it to Cert Warden.
+
+### Fixed
+- Update net package to address a dependabot alert re: http/2.
+- Fix some file downloads having duplicate extension in the name of
+  the file (e.g. `.pem.pem`).
+- Fix retry after badNonce error for some ACME servers. (This is not
+  a Cert Warden bug. Some ACME servers apparently don't follow the 
+  spec for how to handle badNonce. This fix allows Cert Warden to
+  handle these non-compliant servers. Cert Warden will log a warning 
+  when this happens and the issue should be reported to the maintainer 
+  of the non-compliant server.)
+- Fix some error messages printing in a garbled format.
+
+### Changed
+- Minor API path rename for account registration.
+- Minor styling changes in nonce manager.
+
+### Removed
+N/A
+
+
 ## [v0.21.1] - 2024-04-19
 
 Minor updates and fixes.
