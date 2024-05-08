@@ -15,6 +15,8 @@ If you are coming from <0.21.0, please read the warnings on 0.21.0.
 - Add refresh Account button on the edit account page. The button
   queries the ACME server for the current state of the account and
   saves it to Cert Warden.
+- Add debug log message that lists which dns servers dns_checker is
+  configured to use.
 
 ### Fixed
 - Update net package to address a dependabot alert re: http/2.
