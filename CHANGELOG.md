@@ -1,6 +1,28 @@
 # Cert Warden Changelog
 (Formerly LeGo CertHub)
 
+## [v0.21.3] - 2024-05-17
+
+Minor updates and fixes.
+
+If you are coming from <0.21.0, please read the warnings on 0.21.0.
+
+### Added
+N/A
+
+### Fixed
+- Fix default certname. The app was looking for `certwarden` instead
+  of `serverdefault`.
+- Fix various issues in dependencies.
+
+### Changed
+- Update to Go 1.22.3.
+- Update all dependencies (backend and frontend).
+
+### Removed
+N/A
+
+
 ## [v0.21.2] - 2024-05-07
 
 Minor updates and fixes.
