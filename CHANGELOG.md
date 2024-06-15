@@ -1,6 +1,36 @@
 # Cert Warden Changelog
 (Formerly LeGo CertHub)
 
+## [v0.21.4] - 2024-06-13
+
+Minor updates and fixes.
+
+If you are coming from <0.21.0, please read the warnings on 0.21.0.
+
+### Added
+- Add better async order fulfillment. This was already supported but
+  the additional changes make it more robust. If you have the
+  `debug` log level set you will see more API calls to the remote
+  ACME server.
+- Add more robust checking of downloaded certificate chains. Also
+  lay the groundwork for preferred chain selection in a future
+  version. Add some additional log messages related to this.
+
+### Fixed
+- Fix linux install script and service files.
+
+### Changed
+- Update some log messages for clarity.
+- Update to Go 1.22.4.
+- Minor code cleanup for var type and name clarity.
+- Change some usage of ToLower to EqualFold instead as a better
+  coding practice.
+- Update `braces` pkg.
+
+### Removed
+N/A
+
+
 ## [v0.21.3] - 2024-05-17
 
 Minor updates and fixes.
