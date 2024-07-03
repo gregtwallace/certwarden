@@ -1,7 +1,7 @@
 # Cert Warden Changelog
 (Formerly LeGo CertHub)
 
-## [v0.21.5] - 2024-07-02
+## [v0.21.6] - 2024-07-02
 
 Minor updates and fixes.
 
@@ -13,16 +13,21 @@ N/A
 - Fix key pem formatting. In rare cases, an extra blank line was added
   incorrectly.
 - Update a few dependencies to address Dependabot alerts.
+- Fix backend mod file to properly set Go `1.22.4`.
 
 ### Changed
 - The key pem formatting function was tweaked for code clarity and is
   likely a little more robust now as a result.
-- Update to Go 1.22.5.
 - Update Node JS to 18.20.3.
 - Update Alpine to 3.20.
 
 ### Removed
 N/A
+
+
+## [v0.21.5] - 2024-07-02
+
+Removed due to issues with Go 1.22.5.
 
 
 ## [v0.21.4] - 2024-06-13
