@@ -49,9 +49,7 @@ jobs:
         with:
           images: |
             gregtwallace/certwarden
-            gregtwallace/legocerthub
             ghcr.io/${{ github.repository }}
-            ghcr.io/gregtwallace/legocerthub
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
