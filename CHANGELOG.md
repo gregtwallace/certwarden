@@ -1,6 +1,44 @@
 # Cert Warden Changelog
 (Formerly LeGo CertHub)
 
+## [v0.22.0] - 2024-07-11
+
+> [!IMPORTANT]
+> Old API routes using the `/legocerthub` prefix were previously
+> deprecated but are now completely removed. Anything still using the
+> old routes after upgrade will break.
+> Additionally, the `legocerthub` docker builds will no longer be 
+> updated. Builds starting with this version will only be posted under
+> `certwarden` on both GitHub and DockerHub.
+
+This release removes some old remnants of LeGo CertHub and also adds some
+minor features.
+
+### Added
+- Add ability to specify the desired Root Certificate for a certificate.
+  This option was added under the CSR of a Certificate and behaves the 
+  same way as Certbot's `--preferred-chain` flag.
+- Add confirmation dialog for certificate order revocation. Additionally,
+  the confirmation dialog allows specifying a recovation code.
+- Add a button on the frontend edit account screen to easily copy the
+  account URL.
+
+### Fixed
+- Fix footer theme icon to correctly use my custom component.
+
+### Changed
+- Changed orders table to show the root cert's Common Name moving
+  forward. Since this information was not parsed in previous versions,
+  it will not be displayed on existing orders, only on orders fulfilled 
+  in this version and later.
+
+### Removed
+- Remove old `/legocerthub` redirect routes. This will break anything
+  still using the old routes.
+- Disable posting of new docker builds under the old `legocerthub`
+  name.
+
+
 ## [v0.21.6] - 2024-07-02
 
 Minor updates and fixes.
