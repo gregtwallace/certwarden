@@ -1,6 +1,47 @@
 # Cert Warden Changelog
 (Formerly LeGo CertHub)
 
+## [v0.22.1] - 2024-09-07
+
+The auto ordering logic was updated to make Cert Warden more friendly to all ACME
+servers (instead of focusing on Let's Encrypt). Renewal time is now calculated
+based on the percentage of a certificate's validity that is remaining instead of
+a static number of days. A tooltip was added to easily see this information in the 
+Dashboard. Eventually the ACME Renewal Information (ARI) Extentsion will be used
+but since the relevant spec is not yet finalized, I have chosed to not implement
+it yet.
+
+### Added
+- Add tooltip on frontend Dashboard when hovering over the days until expiration.
+  Tooltip shows percentage of validity remaining and the anticipated automatic
+  renewal date.
+
+### Fixed
+- Updated grpc dependency on backend. I don't believe the issue actually
+  impacts Cert Warden but the update was done anyway.
+
+### Changed
+- Change auto ordering (i.e., renewal) logic. Instead of a fixed number of
+  days remaining, calculate when 1/3 of the certificate's validity remains
+  and then place the new order. For extremely short dated certificates, a
+  backstop value of 10 days is used and if validity drops below that regardless
+  of percentage, a new order will be placed.
+- Update frontend expiration days coloring to match the same logic as backend.
+  Warning color is used when a cert is within a week of renewal and red is used
+  when renewal is imminent or overdue.
+- Convert backend Order object time int members to time.Time.
+- Overhaul frontend Flag component to separate logic out for different flags.
+- Update pagination package so default value will return all results from the db.
+- Update axios to 1.7.4 and vite to 5.4.0.
+- Tighten some linting rules and lint accordingly.
+- Use math/rand/v2 in safecert package.
+
+### Removed
+- Remove `valid_remaining_days_threshold` config option in favor of new
+  certificate renewal logic.
+- Remove some dead validTo/validFrom code in backend.
+
+
 ## [v0.22.0] - 2024-07-11
 
 > [!IMPORTANT]
