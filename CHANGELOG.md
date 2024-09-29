@@ -1,6 +1,11 @@
 # Cert Warden Changelog
 (Formerly LeGo CertHub)
 
+## [v0.22.2] - 2024-09-29
+
+Update Vite to address some security issues.
+
+
 ## [v0.22.1] - 2024-09-07
 
 The auto ordering logic was updated to make Cert Warden more friendly to all ACME
