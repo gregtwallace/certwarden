@@ -48,6 +48,7 @@ WORKDIR /app
 RUN apk add bash
 RUN apk add curl
 RUN apk add openssl
+RUN apk add oath-toolkit-oathtool
 RUN mkdir -p /root/.acme.sh
 
 # timezone support
