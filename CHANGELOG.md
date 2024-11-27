@@ -1,6 +1,28 @@
 # Cert Warden Changelog
 (Formerly LeGo CertHub)
 
+## [v0.22.3] - 2024-11-26
+
+Minor updates and fixes.
+
+### Added
+- Log error when failing to write the `env.js` file.
+- Add some initial code for alias support.
+- Add `oath-toolkit-oathtool` dep for acme.sh.
+
+### Fixed
+- Fix possible nil deref when serving the https certificate.
+- Update gomarkdown pkg to address alert.
+- Update goland-jwt pkg to address alert.
+
+### Changed
+- Update to go version 1.23.3.
+- Update to node version 18.20.5.
+- Update `acme.sh` to version 3.0.9.
+- Set default `env.js` to the actual defaults. Some users have run into issues
+  writing this file, so this will bandaid the situation somewhat.
+
+
 ## [v0.22.2] - 2024-09-29
 
 Update Vite to address some security issues.
