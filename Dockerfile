@@ -83,4 +83,4 @@ EXPOSE 4060/tcp
 EXPOSE 4065/tcp
 EXPOSE 4070/tcp
 
-CMD /app/certwarden
+CMD ["/app/certwarden"]
