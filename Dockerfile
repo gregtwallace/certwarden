@@ -12,7 +12,7 @@ ARG NODE_VERSION=18.20.5
 # https://hub.docker.com/_/golang
 # https://hub.docker.com/_/node
 
-FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} as frontend_build
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS frontend_build
 
 ARG FRONTEND_VERSION
 
