@@ -1,5 +1,14 @@
 # Cert Warden Changelog
-(Formerly LeGo CertHub)
+
+## [v0.23.0] - 2024-12-07
+
+This release adds a few new features.
+
+### Added
+- Add PFX download route (https://www.certwarden.com/docs/using_certificates/api_calls/#get-pkcs12-pfxp12-with-certificate-chain-and-private-key).
+- Add challenge domain aliases (https://www.certwarden.com/docs/user_interface/providers/#domain-aliases).
+- Add more detailed error messages and display them to the user.
+
 
 ## [v0.22.3] - 2024-11-26
 
