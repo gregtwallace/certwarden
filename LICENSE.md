@@ -2,7 +2,7 @@ Personal, private (non-commercial) use of this software is permitted.
 
 All Rights Reserved
 
-Copyright (c) 2022-23 Greg T. Wallace
+Copyright (c) 2022-25 Greg T. Wallace
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
