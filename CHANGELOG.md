@@ -1,5 +1,39 @@
 # Cert Warden Changelog
 
+## [v0.24.0] - 2025-01-11
+
+This release adds a number of new features and fixes.
+
+### Added
+- Add OIDC suuport.
+- Added tracking of last API access for keys and certs.
+- Added `/v1/acmeaccounts/:id/post-as-get` route and a hidden frontend
+  page. The form allows using PaG to a resource for troubleshooting
+  purposes.
+- Add language detection efforts for Accept-Language header. Always include
+  sane fallback and default values.
+
+### Fixed
+- Couple of dependency updates related to security.
+- Improve some error messages relating to directory fetching.
+- Improve validation of acme-dns config.
+- Make frontend explicitly check session expiration at login. This fixes
+  an issue where clock skew makes the login succeed but then returns
+  the user to the login page.
+
+### Changed
+- Change frontend date/time to show the date and a tooltip that includes
+  the time.
+- Increase access token validity to 4 minutes, up from 2 minutes.
+- Remove custom http.Client package. Instead, use a custom round tripper
+  to accomplish the same thing.
+- Overhaul `auth` package functionality.
+
+### Removed
+- Remove all references to old application name and remove all backward
+  compatibility.
+
+
 ## [v0.23.0] - 2024-12-07
 
 This release adds a few new features.
