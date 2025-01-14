@@ -619,7 +619,7 @@ Minor fixes to the prior release.
 ## [v0.17.0] - 2023-12-20
 
 This release adds backup functionality. It also adds the ability to run 
-a script on the server after the succesful completion of certificate 
+a script on the server after the successful completion of certificate 
 creation or renewal.
 
 ### Added
