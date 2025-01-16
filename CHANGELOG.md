@@ -1,5 +1,23 @@
 # Cert Warden Changelog
 
+## [v0.24.1] - 2025-01-15
+
+Bug fixes.
+
+### Added
+- Add link to the debug PaG page in frontend (rather than only having it
+  as a hidden page accessible only via typing in the URL path).
+
+### Fixed
+- Fix change password functionality for local `admin` user.
+- Fix error checking when evaluating if an ACME Server returned an ACME
+  type error. This really wasn't causing issues but was discovered while
+  working with the new Debug PaG page.
+- Fix frontend PaG page so an ACME Server error is not returned as an
+  error to the frontend. Instead frontend should receive an OK response
+  containing information about the ACME Server error response.
+
+
 ## [v0.24.0] - 2025-01-11
 
 This release adds a number of new features and fixes.
