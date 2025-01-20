@@ -1,5 +1,24 @@
 # Cert Warden Changelog
 
+## [v0.24.2] - 2025-01-20
+
+Very minor tweaks, polish, and fixes.
+
+### Added
+- Add account select and display of account information on the Debug
+  PaG page.
+- Add debug log of kid on ACME signed POSTs.
+- Indent debug PaG json.
+- Add help link to Debug PaG page.
+
+### Fixed
+- Don't require EAB fields to be populated for Account registration. If
+  an Account was previously registered it will already be bound and thus
+  does not need to be bound again.
+- If Debug PaG URL has an invalid account id, page will redirect to the
+  Accounts page.
+
+
 ## [v0.24.1] - 2025-01-15
 
 Bug fixes.
