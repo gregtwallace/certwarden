@@ -12,10 +12,6 @@ Binary Releases
 
 https://github.com/gregtwallace/certwarden/releases
 
-Docker Hub
-
-https://hub.docker.com/repository/docker/gregtwallace/certwarden/general
-
 GitHub Packages
 
 https://github.com/gregtwallace/certwarden/pkgs/container/certwarden
