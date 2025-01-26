@@ -1,9 +1,9 @@
 [
   {
     "channel": "beta",
-    "version": "0.24.2",
+    "version": "0.24.3",
     "config_version": 3,
     "database_version": 8,
-    "url": "https://github.com/gregtwallace/certwarden/releases/tag/v0.24.2"
+    "url": "https://github.com/gregtwallace/certwarden/releases/tag/v0.24.3"
   }
 ]
