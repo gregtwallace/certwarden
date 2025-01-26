@@ -1,5 +1,24 @@
 # Cert Warden Changelog
 
+## [v0.24.3] - 2025-01-26
+
+More minor tweaks, polish, and fixes.
+
+### Added
+- Add ability to view the entire ACME Server's directory response in the frontend
+  when the frontend debug info toggle is enabled.
+
+### Fixed
+- Fix issue where multiple orders or multiple domains on one order could fail
+  to validate due to the ACME Server finding the previous value for the expected
+  record. This adds a 60 second delay before re-using a previously used resource.
+- Fix frontend navigation links related to `Providers`.
+
+### Changed
+- Frontend debug option was removed from environment config. Instead it
+  is stored in the user's browser and can be toggled on the `Settings` page.
+
+
 ## [v0.24.2] - 2025-01-20
 
 Very minor tweaks, polish, and fixes.
