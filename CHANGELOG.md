@@ -1,5 +1,24 @@
 # Cert Warden Changelog
 
+## [v0.24.4] - 2025-02-03
+
+The porkbun API url changed and requires an update. I am taking this opportunity
+to rip the bandaid off and update all dependencies. Please report any issues.
+
+### Fixed
+- Fix PorkBun API URL (through dependency update).
+- Fixed error with duplicate element `id` on PaG page.
+- Don't show change password widget for non-local user.
+- Fix config docs regarding the removed `frontend_show_debug_info` item.
+
+## Changed
+- Update Go to 1.23.5.
+- Update Node to 18.20.6.
+- Update Alpine to 3.21.
+- Update acme.sh to 3.1.0.
+- Update all other backend and frontend dependencies.
+
+
 ## [v0.24.3] - 2025-01-26
 
 More minor tweaks, polish, and fixes.
