@@ -6,7 +6,7 @@
 
 # Versions - keep in sync with build_releases.yml
 ARG ALPINE_VERSION=3.20
-ARG GO_VERSION=1.23.3
+ARG GO_VERSION=1.23.5
 ARG NODE_VERSION=18.20.5
 # https://hub.docker.com/_/alpine
 # https://hub.docker.com/_/golang
