@@ -61,7 +61,7 @@ jobs:
 
       - run: npm ci
 
-      - run: npx vite build
+      - run: npm run build
         env:
           CI: false
 

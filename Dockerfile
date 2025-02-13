@@ -22,7 +22,7 @@ RUN apk add git && \
     git clone --depth 1 --branch "${FRONTEND_VERSION}" https://github.com/gregtwallace/certwarden-frontend.git /src && \
     cd /src && \
     npm clean-install && \
-    npx vite build
+    npm run build
 
 
 FROM golang:${GO_VERSION}-alpine${ALPINE_VERSION} AS backend_build
