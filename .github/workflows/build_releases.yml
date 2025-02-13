@@ -14,7 +14,7 @@ env:
 
 jobs:
   build-common:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout Main Repo
@@ -43,7 +43,7 @@ jobs:
           path: ./CHANGELOG.md
 
   build-frontend:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout Frontend Repo
@@ -79,7 +79,7 @@ jobs:
           path: ./dist
 
   build-backend-common:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Backend Repo
         uses: actions/checkout@v4
@@ -119,7 +119,7 @@ jobs:
           path: ./scripts/windows
 
   build-backend-linux-arm64:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Backend Repo
         uses: actions/checkout@v4
@@ -154,7 +154,7 @@ jobs:
           path: ./certwarden
 
   build-backend-linux-amd64:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Backend Repo
         uses: actions/checkout@v4
@@ -217,7 +217,7 @@ jobs:
         build-backend-common,
         build-backend-linux-arm64,
       ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Make release directory
@@ -291,7 +291,7 @@ jobs:
         build-backend-common,
         build-backend-linux-amd64,
       ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Make release directory
@@ -365,7 +365,7 @@ jobs:
         build-backend-common,
         build-backend-windows-amd64,
       ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Make release directory
