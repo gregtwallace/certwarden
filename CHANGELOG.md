@@ -1,5 +1,29 @@
 # Cert Warden Changelog
 
+## [v0.24.5] - 2025-02-12
+
+Update major version deps of the frontend to the latest and greatest. The backend
+is unchanged from the last version and no change in functionality of the frontend
+is expected. Some build tools were also updated.
+
+## Fixed
+- Fixed missing field name on PaG page.
+
+## Changed
+- Update to Vite 6.
+- Update to React 19.
+- Update to MUI 6.
+- Build with Node 20 instead of 18.
+- Build using Ubuntu LTS 24.04 and Windows-2022.
+- Overhaul ts and eslint configs to modern values.
+- Do a bunch of linting.
+
+
+### Removed
+- Remove some dead code related to viewing provider configs in the page that shows
+  all providers.
+
+
 ## [v0.24.4] - 2025-02-03
 
 The porkbun API url changed and requires an update. I am taking this opportunity
