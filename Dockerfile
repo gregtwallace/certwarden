@@ -1,6 +1,13 @@
 # example build:
 # docker build . --build-arg=BACKEND_VERSION=v0.8.0 --build-arg=FRONTEND_VERSION=v0.8.0 -t certwarden:v0.8.0
 
+# example master branch build and export
+#   docker builder prune -a 
+#   docker build . --build-arg=BACKEND_VERSION=master --build-arg=FRONTEND_VERSION=master -t certwarden:v0.24.5-a1
+#   docker save -o ./out/cw0.24.5-a1.tar certwarden:v0.24.5-a1
+# import into docker
+#   docker load -i ./cw0.24.5-a1.tar
+
 # example run
 # docker run -d --name certwarden -e TZ=Europe/Stockholm -v ./data:/app/data -p 4050:4050 -p 4055:4055 -p 4060:4060 -p 4065:4065 -p 4070:4070 ghcr.io/gregtwallace/certwarden:latest
 
