@@ -1,5 +1,30 @@
 # Cert Warden Changelog
 
+## [v0.24.6] - 2025-03-25
+
+A couple minor features, as well as minor updates and fixes.
+
+## Added
+- Add CNAME check when using Domain Aliases. An error is logged to indicate when
+  an alias is configured in Cert Warden but is not found when checking DNS
+  records. This should make alias problems more obvious and easier to
+  troubleshoot.
+- Add persistent browser storage for the rows per page setting. The user selection
+  will persist in local storage. The `ACME Orders` table has a separately persisted
+  value since users will probably want that one to be shorter and not tied to the
+  other table views.
+
+## Fixes
+- Multiple dependency updates to address CVEs.
+- Allow `+` symbol in email addresses.
+- Fix some minor typos.
+
+## Changed
+- Change logs display behavior to show last 500 entries. This is to improve
+  viewing consistency and performance.
+- Update to Vite 6.2.2.
+
+
 ## [v0.24.5] - 2025-02-12
 
 Update major version deps of the frontend to the latest and greatest. The backend
