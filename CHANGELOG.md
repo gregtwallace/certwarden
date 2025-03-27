@@ -1,5 +1,10 @@
 # Cert Warden Changelog
 
+## [v0.24.7] - 2025-03-27
+
+Fix cname check for dns-01.
+
+
 ## [v0.24.6] - 2025-03-25
 
 A couple minor features, as well as minor updates and fixes.
