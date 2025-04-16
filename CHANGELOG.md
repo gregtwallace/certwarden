@@ -1,5 +1,35 @@
 # Cert Warden Changelog
 
+## [v0.24.8] - 2025-04-15
+
+This version brings a substantial overhaul to the challenge solving system. This
+should provide a more consistent solving experience overall. There are also some
+minor fixes and dependency updates.
+
+## Added
+- Add cache headers to built-in http-01 server.
+- Log individual authroization failures and their errors.
+
+## Fixes
+- Fix unintended hold over of in-use challenge resources.
+- Fix failures caused by `new-nonce` returning a 503 error.
+- Fix resource overlap and transient solver failures.
+- Fix possible security issues by updating some dependencies.
+- Fix improper user logout if the brower is refreshed and the access token is
+  expired but the session token is not.
+- Fix redirect after submit of the add provider form.
+
+## Changed
+- Overhaul challenge solving and resource tracking. Of primary note,
+  at minimum, solving will now take 3 minutes to ensure full resource
+  propagation. The new system may take longer for single dns name certs
+  but well expedite certs with more than 1 dns name.
+- Increase max solving time to 60 minutes before timeout.
+- Update Go to 1.24.2
+- Update go-acme/lego to 4.22.2
+- Update node to 20.19.0
+
+
 ## [v0.24.7] - 2025-03-27
 
 Fix cname check for dns-01.
