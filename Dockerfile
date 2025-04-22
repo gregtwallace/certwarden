@@ -72,6 +72,9 @@ COPY ./README.md .
 COPY ./CHANGELOG.md .
 COPY ./LICENSE.md .
 
+# permissions for scripts (*.sh files only)
+RUN find ./scripts -type f -name "*.sh" -print0 | xargs -0 chmod 755
+
 # make default data folder
 RUN sh -c "mkdir /app/data"
 # defer empty config file generation to Cert Warden on first run (if not manually made by user prior)

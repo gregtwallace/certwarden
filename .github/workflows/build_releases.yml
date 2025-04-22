@@ -277,11 +277,19 @@ jobs:
           name: CHANGELOG.md
           path: ./release
 
+      - name: Set script permissions
+        run: |
+          find ./release/scripts -type f -name "*.sh" -print0 | xargs -0 chmod 755
+
+      - name: Tar files (preserves permissions)
+        run: |
+          tar -cvf certwarden_linux_arm64.tar ./release
+
       - name: Save Release
         uses: actions/upload-artifact@v4
         with:
           name: certwarden_linux_arm64
-          path: ./release
+          path: certwarden_linux_arm64.tar
 
   release-file-linux-amd64:
     needs:
@@ -351,11 +359,19 @@ jobs:
           name: CHANGELOG.md
           path: ./release
 
+      - name: Set script permissions
+        run: |
+          find ./release/scripts -type f -name "*.sh" -print0 | xargs -0 chmod 755
+
+      - name: Tar files (preserves permissions)
+        run: |
+          tar -cvf certwarden_linux_amd64.tar ./release
+
       - name: Save Release
         uses: actions/upload-artifact@v4
         with:
           name: certwarden_linux_amd64
-          path: ./release
+          path: certwarden_linux_amd64.tar
 
   release-file-windows-amd64:
     needs:
