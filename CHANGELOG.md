@@ -1,5 +1,41 @@
 # Cert Warden Changelog
 
+## [v0.24.9] - 2025-04-22
+
+Some minor fixes and improvements.
+
+> [!IMPORTANT]
+> The way post processing scripts are run has changed! Scripts will be run
+> in accord with their shebang. This also means your script MUST have the +x
+> permission or it won't run. The previous way of calling these scripts did
+> not enforce permissions, so if your scripts stop working after this update
+> they likely have the wrong shebang or are missing the executable permission.
+
+## Add
+- Allow ACME Server / service that does not provide an account key change
+  URL in its directory.
+- Add log messages regarding succesful provision and deprovision of challenge
+  records.
+- Honor post-process script shebang. Scripts will run as specified which
+  may produce new errors compared to the last version of CW. This allows more
+  flexibility with scripting (e.g., you could use something like Python if you
+  wanted to).
+
+## Fixed
+- Fix nonce manager's retry loop when CW fails to get a nonce. This was
+  implemented in the last version but the loop was wrong.
+- Fix frontend UI erroneous error when adding an ACME Server.
+- Fix garbage code & comments related to new version checking. Check will 
+  always run once per 24 hours, regardless of success or fail.
+- Security fixes.
+- Set included scripts in the `/scripts` folder to include the executable
+  permission.
+
+## Changed
+- Switch to using time.After() instead of extra code for timers. Go GC now
+  handles this without issue and the code is cleaner.
+
+
 ## [v0.24.8] - 2025-04-15
 
 This version brings a substantial overhaul to the challenge solving system. This
@@ -10,7 +46,7 @@ minor fixes and dependency updates.
 - Add cache headers to built-in http-01 server.
 - Log individual authroization failures and their errors.
 
-## Fixes
+## Fixed
 - Fix unintended hold over of in-use challenge resources.
 - Fix failures caused by `new-nonce` returning a 503 error.
 - Fix resource overlap and transient solver failures.
