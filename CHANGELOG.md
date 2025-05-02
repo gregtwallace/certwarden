@@ -1,5 +1,38 @@
 # Cert Warden Changelog
 
+## [v0.25.0] - 2025-05-02
+
+This release brings some significant feature updates. The most significant is
+the ability to manually tweak wait times which could be particularly helpful
+if you're getting errors related to DNS validation. One size does not fit all
+in this area so I've made it something you can adjust yourself. If you're 
+having such an error, try increasing the relevant provider's wait time.
+
+> [!CAUTION]
+> This release performs database AND config modifications. Ensure you have a
+> recent backup and a recovery plan if something goes wrong.
+
+## Add
+- Add manual adjustments to the delay time for each provider. That is, you can
+  now manually specify how long Cert Warden should wait before telling the ACME
+  Server to proceed with resource validation. The existing behavior waits roughly
+  3 minutes, so that default is automatically applied to existing providers,
+  except for http-01-internal which does not require any delay.
+- Add field to manually specify the address for the Cert Warden Client post
+  processing (instead of using the cert subject). Any cert with a Client
+  key present will have the subject automatically copied to the address field
+  to ensure your existing setup doesn't break.
+- Add legacy PFX support via api call.
+
+## Fixed
+- Update react-router to 7.5.2 to fix a security issue.
+
+## Changed
+- Make acme.sh provider more efficient. Modify scripts once in the source vs.
+  every time they are run.
+- Update acme.sh to 3.1.1.
+
+
 ## [v0.24.9] - 2025-04-22
 
 Some minor fixes and improvements.
