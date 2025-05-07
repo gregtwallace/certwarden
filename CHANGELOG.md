@@ -1,5 +1,15 @@
 # Cert Warden Changelog
 
+## [v0.25.1] - 2025-05-06
+
+Minor fixes.
+
+## Fixed
+- Fix erroneous frontend error after clicking place order.
+- Improve Content-Type parsing (fixes use with some providers e.g., GoDaddy).
+- Update vite to 6.3.5 to address security issue.
+
+
 ## [v0.25.0] - 2025-05-02
 
 This release brings some significant feature updates. The most significant is
