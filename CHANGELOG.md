@@ -1,5 +1,27 @@
 # Cert Warden Changelog
 
+## [v0.26.0] - 2025-05-18
+
+This release adds support for ACME `profiles`. I'm not sure any provider is
+using this outside of Let's Encrypt, but LE is making a pretty big investment
+on this front so I wanted to get support added. A "prettier" version of support
+is probably coming in the future, but for now this version is sufficient.
+
+The new `ACME Profile` field is listed under the `CSR` section of a certificate.
+
+## Added
+- Add support for specifying an ACME profile. If an order has a profile, an
+  additional icon with the profile name will be shown under the order's
+  "Details" column.
+- Add some initial code for ACME ARI support. This code isn't actually in
+  use yet though.
+
+## Fixed
+- Impose proper rate limiting within both CW's http client as well as within
+  the challenges package specifically.
+- Try to ensure challenge records are actually deprovisioned during shutdown.
+
+
 ## [v0.25.1] - 2025-05-06
 
 Minor fixes.
