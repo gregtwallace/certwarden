@@ -1,5 +1,66 @@
 # Cert Warden Changelog
 
+## [v0.27.0] - 2025-07-09
+
+This release primarily adds support for the ACME Renewal Info
+Extension (RFC 9773).
+
+See: https://datatracker.ietf.org/doc/rfc9773/
+
+If an ACME Server does not support ARI, Cert Warden will generate a
+renewal window itself using its own algorithm. Certificates that are 
+valid for 10 days or less will be renewed roughly at the halfway mark
+of their validity and certificates that are valid longer than 10 days 
+will be renewed when roughly 1/3 of their validity remains.
+
+Options to manually configure renewal timing have been removed.
+
+> [!NOTE]
+> Cert Warden will run a job to generate the initial renewal information
+> for your certificates approximately 1 minute after the first start of 
+> this version. If you login before this information finishes updating
+> you will see `Error!` on the dashboard where the Expiration Flags would
+> normally be. This is expected and will resolve once the first ARI job finishes.
+
+> [!CAUTION]
+> This release performs database modifications. Ensure you have a
+> recent backup and a recovery plan if something goes wrong.
+
+## Added
+- Add ACME Renewal Info (ARI) extension support. Overhaul logic for when to do
+  cert renewals. If the ACME Server supports ARI, it is respected. If it does
+  not, Cert Warden generates a sane "in-house" ARI value and uses that. Cert
+  Warden now checks for and performs renewals 1 minute after start and then
+  roughly every 2 hours after that. Refresh timing is no longer configurable.
+- Add ARI `replaces` field. Some ACME Servers support this to bypass rate
+  limits.
+- Add ARI explanation flag to dashboard.
+
+## Fixed
+- Fix function that checked if there is post processing to do for a cert.
+- Fix issue where the drop down for key selection on a cert failed to show
+  the key algorithm of the current key.
+- Backend pkg update to address a dependabot alert.
+- Update Go to 1.24.5 for improvements and fixes.
+- Update Node to 20.19.3.
+- Clarify what "Profile" means in the popup of an order.
+- Add noreferrer to all links that target _blank.
+
+## Changed
+- Change color coding on the dashboard for certificate validity remaining:
+  - greater than 1 week until renewal window begins : primary
+  - less than 1 week until renewal window begins, but it hasn't begun : secondary
+  - in the renewal window : warning
+  - past the end of the renewal window : error
+- Hovering over the validity remaining flag now shows all information about
+  the certificate's renewal window.
+- Do not require an e-mail address on accounts. Let's Encrypt is getting rid
+  of them.
+- Update all frontend dependencies.
+- Minor changes to the way some bytes.Buffer are used.
+- Minor linting.
+
+
 ## [v0.26.0] - 2025-05-18
 
 This release adds support for ACME `profiles`. I'm not sure any provider is
