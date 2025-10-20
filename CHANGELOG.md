@@ -1,5 +1,46 @@
 # Cert Warden Changelog
 
+## [v0.28.0] - 2025-10-19
+
+This release removes dns record checking during the propagation of
+dns challenge records. This function was somewhat hit or miss depending
+on provider. Instead, each provider now has one configurable wait
+time that Cert Warden will wait before telling the ACME Server to
+proceed with validation. 
+
+The config migration will add your two existing wait times together and use
+that as your wait time value. A floor of 5 minutes will be used
+if the value is less than that. For http, a minimum floor of 5 seconds
+is used.
+
+You should play with the wait time to find a reasonably low value so
+you're not waiting excessively, but not so low that you fail validation.
+For most dns providers, 5 minutes should be fine.
+
+Otherwise, this is minor fixes and dependency updates.
+
+## Fixed
+- Fix bug where a long order 'processing' state would not properly
+  backoff.
+- Fix db migration edge case.
+- Fix missing current log file from zip download. The current log will
+  now be included in the zip.
+
+## Changed
+- Update to go 1.25.3.
+- Update all backend direct dependencies.
+- Update all frontend dependencies.
+- Update node to 20.19.5.
+- Update alpine to 3.22.
+- Update ACME signing code for clarity.
+- Update log parsing for display in web ui. This functionality is more
+  resilient to corrupt log entries.
+
+## Removed
+- Remove dns_checker functionality. Instead of checking for record
+  propagation, Cert Warden now waits a user specified amount of time.
+
+
 ## [v0.27.0] - 2025-07-09
 
 This release primarily adds support for the ACME Renewal Info
