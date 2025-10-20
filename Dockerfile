@@ -12,7 +12,7 @@
 # docker run -d --name certwarden -e TZ=Europe/Stockholm -v ./data:/app/data -p 4050:4050 -p 4055:4055 -p 4060:4060 -p 4065:4065 -p 4070:4070 ghcr.io/gregtwallace/certwarden:latest
 
 # Versions - keep in sync with build_releases.yml
-ARG ALPINE_VERSION=3.21
+ARG ALPINE_VERSION=3.22
 ARG GO_VERSION=1.25.3
 ARG NODE_VERSION=20.19.5
 # https://hub.docker.com/_/alpine
