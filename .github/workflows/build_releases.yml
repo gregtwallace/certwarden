@@ -10,7 +10,7 @@ env:
   GITHUB_REF: ${{ github.ref }}
   # Versions - keep in sync with Dockerfile
   GO_VERSION: '1.25.5'
-  NODE_VERSION: '20.19.5'
+  NODE_VERSION: '20.19.6'
 
 jobs:
   build-common:
