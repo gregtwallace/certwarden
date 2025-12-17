@@ -1,5 +1,28 @@
 # Cert Warden Changelog
 
+## [v0.28.1] - 2025-12-16
+
+This release is a few minor fixes and dependency updates.
+
+## Added
+- Add ability to specify Cert Warden client notification port.
+
+## Fixed
+- Fix post processing parameter posting (database had parameter order
+  flip-flopped).
+- Fix put csr extenstions (had wrong field name).
+- Fix file encoding in acme.sh prep script.
+
+## Changed
+- Update to go 1.25.5
+- Update to node 20.19.6
+- Update x/crypto to 0.45.0
+- Update go-acme/lego/v4 to 4.29.0
+- Update acme.sh to 3.1.2
+- Update all frontend dependencies.
+- Do some minor linting.
+
+
 ## [v0.28.0] - 2025-10-19
 
 This release removes dns record checking during the propagation of
