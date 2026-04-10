@@ -1,5 +1,24 @@
 # Cert Warden Changelog
 
+## [v0.29.0] - 2026-04-09
+
+This release adds support for the dns-persist-01 challenge type. There
+is a new provider `dns-persist-01 Manual` that should cover all cases.
+
+## Added
+- Add dns-persist-01 challenge type support.
+
+## Fixed
+- Several dependencies with possible issues updated.
+
+## Changed
+- Update to go 1.25.5
+- Update to node 20.19.6
+- Update all frontend dependencies.
+- Update github.com/go-jose/go-jose/v4 to v4.1.4
+- Update google.golang.org/grpc to v1.80.0
+
+
 ## [v0.28.1] - 2025-12-16
 
 This release is a few minor fixes and dependency updates.
