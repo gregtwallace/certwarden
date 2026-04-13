@@ -1,5 +1,14 @@
 # Cert Warden Changelog
 
+## [v0.29.1] - 2026-04-13
+
+Minor changes.
+
+## Fixed
+- Improve http client rate limiter.
+- Improve ARI update failed error message.
+
+
 ## [v0.29.0] - 2026-04-09
 
 This release adds support for the dns-persist-01 challenge type. There
