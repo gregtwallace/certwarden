@@ -1,5 +1,28 @@
 # Cert Warden Changelog
 
+## [v0.29.2] - 2026-04-29
+
+Fixes and updates.
+
+## Fixed
+- Security issue where certificates could be accessed without the certificate
+  apiKey (Note: This did NOT impact keys or key material). In order to access
+  the certificate, the key apiKey was required, so security impact is minimal.
+  Thank you to @Feliksas to reporting this.
+
+## Changed
+- Wake up hourly to check certificates (instead of every other hour).
+- Increase http request limit to 10 (from 3). The prior release decreased this
+  due to a misconfiguration on Let's Encrypts infrastructure. The issue should
+  be resolved so we can go faster again.
+- Move retry-after header parsing and add some tests.
+- Update go-acme/lego/v4 to 4.35.2
+- Rewrite dnscloudflare01 using Cloudflare's newest Go API (v6).
+- Update all Github actions to latest versions.
+- Update node.js to 24.15.0
+
+
+
 ## [v0.29.1] - 2026-04-13
 
 Minor changes.
