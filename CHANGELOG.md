@@ -1,5 +1,40 @@
 # Cert Warden Changelog
 
+## [v0.29.3] - 2026-05-15
+
+Minor updates and fixes.
+
+## Added
+- Add default path to acme.sh provider form.
+- Add build flag to omit dns-01 go-acme from builds (not in use yet but
+  provides an option to greatly reduce compile size and time).
+- Add backend github action for testing.
+- Add download route tests.
+
+## Fixed
+- Fix issue where newest valid order wasn't served for a cert.
+  Issue triggered when newer order had a shorter validity and the "old"
+  order had a later expiration date. This could be triggered by the
+  recent Let&apos;s Encrypt change from 90 to 45 day certificates.
+- Updates to address several frontend package warnings.
+- Improve redacted console log of frontend logging. Also add redaction
+  for the CW client AES key.
+- Fix validation test regarding rfc850 time.
+- Use derivative of shutdown context in all storage contexts.
+
+## Changed
+- Update axios to 1.16.0
+- Update follow-redirects to 1.16.0
+- Update postcss to 8.5.14
+- Use build flags to exclude acme.sh provider from windows builds (as
+  opposed to checking GOOS at runtime)
+- Minor updates to dns-persist-01
+- Begin rework of storage. Preparation to make the SQL code storage method
+  agnostic and to move all sqlite specific code to its own package. In the
+  future I'd like to change sqlite package to move away from the CGO
+  requirement.
+
+
 ## [v0.29.2] - 2026-04-29
 
 Critical security fix and other updates.
