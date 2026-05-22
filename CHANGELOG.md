@@ -1,5 +1,17 @@
 # Cert Warden Changelog
 
+## [v0.29.5] - 2026-05-22
+
+Major bug fix.
+
+> [!CAUTION]
+> You should immediately update Cert Warden.
+
+## Fixed
+- Fix risk of unintended path traversal using a maliciously crafted
+  payload.
+
+
 ## [v0.29.4] - 2026-05-21
 
 Minor bug fix.
