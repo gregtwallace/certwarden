@@ -1,5 +1,15 @@
 # Cert Warden Changelog
 
+## [v0.29.4] - 2026-05-21
+
+Minor bug fix.
+
+## Fixed
+- Before allowing a new order, check for any existing incomplete orders.
+  If any incomplete orders exist, retry the most recent one of those.
+  This should prevent accidental creation of multiple renewal orders.
+
+
 ## [v0.29.3] - 2026-05-15
 
 Minor updates and fixes.
