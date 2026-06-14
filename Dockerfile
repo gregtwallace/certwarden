@@ -51,6 +51,15 @@ FROM alpine:${ALPINE_VERSION}
 
 WORKDIR /app
 
+# add LE's new CAs
+COPY ./ca/root-ye.pem /usr/local/share/ca-certificates/root-ye.crt
+COPY ./ca/root-yr.pem /usr/local/share/ca-certificates/root-yr.crt
+
+RUN cat /usr/local/share/ca-certificates/root-ye.crt >> /etc/ssl/certs/ca-certificates.crt && \
+    cat /usr/local/share/ca-certificates/root-yr.crt >> /etc/ssl/certs/ca-certificates.crt && \
+    apk --no-cache add \
+        curl
+
 # acme.sh dependencies
 RUN apk add bash
 RUN apk add curl
