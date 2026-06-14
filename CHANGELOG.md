@@ -1,5 +1,35 @@
 # Cert Warden Changelog
 
+## [v0.29.6] - 2026-06-14
+
+This is a maintenance release with many changes under the hood to
+help the code base mature. There are also a couple of bug fixes.
+
+
+## Added
+- Add Let's Encrypt root-ye and root-yr to the CA Trust Store.
+
+## Fixed
+- Fix for the selection of the previous order when generating the
+  new order `replaces` value.
+- Fix bug where accounts couldn't be sorted by their server name.
+
+## Added
+- Add a large number of tests to storage package.
+- Add update validation for several `put` storage functions.
+
+## Changed
+- Update go-acme to v5 (should add more dns provider support).
+- Simplify handling of ACME time.
+- Update various 'in use' queries for consistency.
+- Simplify some storage functions and make them more consistent.
+- Update node to 24.16.0
+- Update go to 1.26.4
+- Update vite to 6.4.3
+- Update react router to 7.17.0
+
+
+
 ## [v0.29.5] - 2026-05-22
 
 Major bug fix.
