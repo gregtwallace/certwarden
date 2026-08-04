@@ -1,5 +1,24 @@
 # Cert Warden Changelog
 
+## [v0.29.7] - 2026-08-03
+
+Fixes and (some major) dependency updates.
+
+## Fixed
+- Fix improper calculation of the ARI id when the first bit of a
+  cert's serial number is a 1.
+
+## Changed
+- Update vite to v8 (from v6).
+- Update react-router to v8 (from v7).
+- Update backend injection of nonce when hosting frontend.
+- Update go-acme/lego to 5.3.1.
+- Update other minor versions of frontend dependencies.
+- Update to go 1.26.5.
+- Update to node 24.19.0.
+- Update to alpine 3.24.
+
+
 ## [v0.29.6] - 2026-06-14
 
 This is a maintenance release with many changes under the hood to
