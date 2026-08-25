@@ -11,7 +11,7 @@
 # example run
 # docker run -d --name certwarden -e TZ=Europe/Stockholm -v ./data:/app/data -p 4050:4050 -p 4055:4055 -p 4060:4060 -p 4065:4065 -p 4070:4070 ghcr.io/gregtwallace/certwarden:latest
 
-# Versions - keep in sync with build_releases.yml
+# Versions - keep in sync with build_releases.yml, frontend/.node-version, and go.mod
 ARG ALPINE_VERSION=3.24
 ARG GO_VERSION=1.26.5
 ARG NODE_VERSION=24.19.0
