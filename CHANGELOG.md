@@ -1,5 +1,72 @@
 # Cert Warden Changelog
 
+## [v0.30.0] - 2026-09-04
+
+Major code changes in this release. If absolute stability is a must,
+I recommend waiting to install.
+
+The goal of this release was to completely test `storage` and its related
+packages. In doing so, there were a litany of other supporting code changes
+that do not have tests yet. As such, the storage package is much more robust
+but there may be bugs introduced elsewhere. Now that this is complete, I
+plan to remove the CGO dependency by moving to one of the native go sqlite
+packages. Stay tuned!
+
+There are a number of bug fixes as well.
+
+> [!CAUTION]
+> This release performs database modifications. Ensure you have a
+> recent backup and a recovery plan if something goes wrong.
+> If you have duplicate `users.username` (different case) or duplicate
+> `acme_orders.location` (different case) automatic db migration will
+> fail. You will need to manually edit the database file and decide
+> which of the duplicates to keep to resolve the conflict.
+
+## Fixed
+- Remove extraneous log call during enumeration of provider configs.
+- Make db `users.username` case insensitive.
+- Make db `acme_orders.location` case insensitive.
+- Fix bug where `updated_at` was set to 0 when new certificate is
+  used to simultaneously create a new key.
+- Lots of linting to fix minor nits.
+- Fix name validation regex (was using `A-z` instead of `A-Za-z`).
+- Fix bug where a tie in `getCertNewestValidOrder` func would return
+  the wrong value.
+- Fix bug where `getCertNewestValidOrder` returns the wrong `api_key_new`
+  for a cert's key.
+- Fix bug where `GetOrders` returns the wrong `api_key_new`
+  for a cert's key.
+- Add missing err check in `PostNewOrder`.
+- Store ARI retry-after value in UTC (like the other values).
+- Raise security standard on http redirect handler. This may be removed
+  in a future version, but for now its at least an improvement.
+- Security fix in update to `google.golang.org/grpc@v1.83.1`.
+- Make frontend log viewer slightly nicer.
+
+## Added
+- Add automatic linting via `golangci-lint run`. There are more
+  linters to enable and run, but this is a good start.
+- Have go-acme use the main app logger instead of its own.
+- Add mountains of tests to extensively test the `storage` package.
+- Frontend will normalize the display of date and time based on the locale
+  it detects.
+- Overhaul frontend time management, in general and add tests for it.
+- Add frontend github test action.
+
+## Changed
+- Drop acme AccountID from order object and drop `orders.acme_account_id`
+  from the database. It wasn't needed or used.
+- Make `users.username` and `orders.acme_location` case insensitive.
+- Allow `last_access` fields to be null. Auto convert where appropriate.
+- Rework custom types in storage for better sanity.
+- Many changes to use time.Time in place of int (unix) times.
+- Switch to a sane db version management package (`goose`). Convert all
+  migration logic to the new package and add complete testing.
+
+## Removed
+- Dropped support to auto migrate from db v0.
+
+
 ## [v0.29.7] - 2026-08-03
 
 Fixes and (some major) dependency updates.
