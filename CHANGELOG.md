@@ -1,5 +1,10 @@
 # Cert Warden Changelog
 
+## [v0.30.1] - 2026-09-04
+
+Quick fix for status queue pages. Thanks @beejaygee.
+
+
 ## [v0.30.0] - 2026-09-04
 
 Major code changes in this release. If absolute stability is a must,
