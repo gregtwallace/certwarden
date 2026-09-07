@@ -9,9 +9,6 @@ Set-Location $rootDir/certwarden-backend
 # Include config example
 Copy-Item -Path $rootDir/certwarden-backend/config.default.yaml -Destination $outDir
 
-# Mandatory env flag for sqlite
-$env:CGO_ENABLED = 1
-
 # Windows x64
 $env:GOARCH = "amd64"
 $env:GOOS = "windows"

@@ -35,14 +35,10 @@ RUN apk add git && \
 FROM golang:${GO_VERSION}-alpine${ALPINE_VERSION} AS backend_build
 
 ARG BACKEND_VERSION
-ARG CGO_ENABLED=1
-
-ENV CGO_CFLAGS="-D_LARGEFILE64_SOURCE"
 
 WORKDIR /
 
-RUN apk add git gcc musl-dev && \
-    git clone --depth 1 --branch "${BACKEND_VERSION}" https://github.com/gregtwallace/certwarden-backend.git /src && \
+RUN git clone --depth 1 --branch "${BACKEND_VERSION}" https://github.com/gregtwallace/certwarden-backend.git /src && \
     cd /src && \
     go build -o ./certwarden ./cmd/api-server
 
