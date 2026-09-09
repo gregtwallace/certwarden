@@ -38,7 +38,8 @@ ARG BACKEND_VERSION
 
 WORKDIR /
 
-RUN git clone --depth 1 --branch "${BACKEND_VERSION}" https://github.com/gregtwallace/certwarden-backend.git /src && \
+RUN apk add git && \
+    git clone --depth 1 --branch "${BACKEND_VERSION}" https://github.com/gregtwallace/certwarden-backend.git /src && \
     cd /src && \
     go build -o ./certwarden ./cmd/api-server
 
