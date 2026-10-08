@@ -111,5 +111,5 @@ jobs:
       - name: save build release
         uses: actions/upload-artifact@v7
         with:
-          name: certwarden-${{ matrix.build-target }}
           path: '${{ github.workspace }}/src/certwarden/_out/certwarden-*_${{ matrix.build-target }}.*'
+          archive: false
