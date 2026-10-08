@@ -105,10 +105,11 @@ jobs:
         run: npm ci
 
       - name: Build using build script
+        working-directory: 'src/certwarden'
         run: python build.py ${{ matrix.build-target }} --gitrequired
 
       - name: save build release
         uses: actions/upload-artifact@v7
         with:
           name: certwarden-${{ matrix.build-target }}
-          path: ./src/certwarden/_out/certwarden-*_${{ matrix.build-target }}.*
+          path: '/src/certwarden/_out/certwarden-*_${{ matrix.build-target }}.*'
