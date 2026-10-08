@@ -91,6 +91,7 @@ jobs:
         uses: actions/setup-go@v6
         with:
           go-version-file: 'src/certwarden-backend/go.mod'
+          cache-dependency-path: 'src/certwarden-backend/go.sum'
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
