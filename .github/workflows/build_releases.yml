@@ -20,14 +20,13 @@ jobs:
       matrix:
         python-version: ['3.14']
         build-target:
-          # TODO: Uncomment
-          # - "windows_amd64"
+          - "windows_amd64"
           - 'linux_amd64'
-          # - "linux_arm64"
-          # - "darwin_amd64"
-          # - "darwin_arm64"
-          # - "freebsd_amd64"
-          # - "freebsd_arm64"
+          - "linux_arm64"
+          - "darwin_amd64"
+          - "darwin_arm64"
+          - "freebsd_amd64"
+          - "freebsd_arm64"
 
     steps:
       # checkout this repo
