@@ -96,6 +96,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
+          # apparently doesn't like absolute path
           node-version-file: 'src/certwarden-frontend/.node-version'
           cache: 'npm'
           cache-dependency-path: 'src/certwarden-frontend/package-lock.json'
@@ -106,7 +107,7 @@ jobs:
 
       - name: Build using build script
         working-directory: '${{ github.workspace }}/src/certwarden'
-        run: python build.py ${{ matrix.build-target }} --gitrequired
+        run: python build_release.py ${{ matrix.build-target }} --gitrequired
 
       - name: save build release
         uses: actions/upload-artifact@v7
