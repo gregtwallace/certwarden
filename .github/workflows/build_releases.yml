@@ -18,11 +18,11 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.14"]
+        python-version: ['3.14']
         build-target:
           # TODO: Uncomment
           # - "windows_amd64"
-          - "linux_amd64"
+          - 'linux_amd64'
           # - "linux_arm64"
           # - "darwin_amd64"
           # - "darwin_arm64"
@@ -51,7 +51,7 @@ jobs:
       # checkout backend to the correct ref
       # use release version if THIS_REF is formatted as "v#.#.#", else try branch name, else use default
       - name: checkout backend to correct ref
-        working-directory: "src/certwarden-backend"
+        working-directory: 'src/certwarden-backend'
         run: |
           if [[ ${{ env.THIS_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
               git checkout "${{ env.THIS_REF }}"
@@ -71,7 +71,7 @@ jobs:
           path: 'src/certwarden-frontend'
 
       - name: checkout frontend to correct ref
-        working-directory: "src/certwarden-frontend"
+        working-directory: 'src/certwarden-frontend'
         run: |
           if [[ ${{ env.THIS_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
               git checkout "${{ env.THIS_REF }}"
@@ -80,7 +80,6 @@ jobs:
           else
               git checkout "${{ env.FRONTEND_REF_DEFAULT }}"
           fi
-
 
       # setup build environment
       - name: Set up Python ${{ matrix.python-version }}
@@ -98,9 +97,10 @@ jobs:
         with:
           node-version-file: 'src/certwarden-frontend/.node-version'
           cache: 'npm'
+          cache-dependency-path: 'src/certwarden-frontend/package-lock.json'
 
       - name: get pkgs
-        working-directory: "src/certwarden-frontend"
+        working-directory: 'src/certwarden-frontend'
         run: npm ci
 
       - name: Build using build script
