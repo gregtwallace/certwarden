@@ -96,9 +96,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version-file: '${{ github.workspace }}/src/certwarden-frontend/.node-version'
+          node-version-file: 'src/certwarden-frontend/.node-version'
           cache: 'npm'
-          cache-dependency-path: '${{ github.workspace }}/src/certwarden-frontend/package-lock.json'
+          cache-dependency-path: 'src/certwarden-frontend/package-lock.json'
 
       - name: get frontend pkgs
         working-directory: '${{ github.workspace }}/src/certwarden-frontend'
