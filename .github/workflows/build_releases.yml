@@ -37,7 +37,7 @@ jobs:
           repository: ${{ github.repository }}
           ref: ${{ env.THIS_REF }}
           fetch-depth: 0
-          path: 'src/certwarden'
+          path: '/src/certwarden'
 
       # checkout backend
       - name: checkout backend repo
@@ -46,12 +46,12 @@ jobs:
           repository: ${{ github.repository_owner }}/certwarden-backend
           # ref: to be set later
           fetch-depth: 0
-          path: 'src/certwarden-backend'
+          path: '/src/certwarden-backend'
 
       # checkout backend to the correct ref
       # use release version if THIS_REF is formatted as "v#.#.#", else try branch name, else use default
       - name: checkout backend to correct ref
-        working-directory: 'src/certwarden-backend'
+        working-directory: '/src/certwarden-backend'
         run: |
           if [[ ${{ env.THIS_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
               git checkout "${{ env.THIS_REF }}"
@@ -68,10 +68,10 @@ jobs:
           repository: ${{ github.repository_owner }}/certwarden-frontend
           # ref: to be set later
           fetch-depth: 0
-          path: 'src/certwarden-frontend'
+          path: '/src/certwarden-frontend'
 
       - name: checkout frontend to correct ref
-        working-directory: 'src/certwarden-frontend'
+        working-directory: '/src/certwarden-frontend'
         run: |
           if [[ ${{ env.THIS_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
               git checkout "${{ env.THIS_REF }}"
@@ -90,22 +90,22 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v6
         with:
-          go-version-file: 'src/certwarden-backend/go.mod'
-          cache-dependency-path: 'src/certwarden-backend/go.sum'
+          go-version-file: '/src/certwarden-backend/go.mod'
+          cache-dependency-path: '/src/certwarden-backend/go.sum'
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version-file: 'src/certwarden-frontend/.node-version'
+          node-version-file: '/src/certwarden-frontend/.node-version'
           cache: 'npm'
-          cache-dependency-path: 'src/certwarden-frontend/package-lock.json'
+          cache-dependency-path: '/src/certwarden-frontend/package-lock.json'
 
-      - name: get pkgs
-        working-directory: 'src/certwarden-frontend'
+      - name: get frontend pkgs
+        working-directory: '/src/certwarden-frontend'
         run: npm ci
 
       - name: Build using build script
-        working-directory: 'src/certwarden'
+        working-directory: '/src/certwarden'
         run: python build.py ${{ matrix.build-target }} --gitrequired
 
       - name: save build release
