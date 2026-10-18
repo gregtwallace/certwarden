@@ -110,6 +110,7 @@ jobs:
 
       - name: get release path
         id: rel_path
+        working-directory: '${{ github.workspace }}/src/certwarden'
         run: |
           RESULT=$( python -c "import build_release; print(build_release.output_path())" )
           echo "path=$RESULT" >> $GITHUB_OUTPUT
