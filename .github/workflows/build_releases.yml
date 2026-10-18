@@ -108,8 +108,14 @@ jobs:
         working-directory: '${{ github.workspace }}/src/certwarden'
         run: python build_release.py ${{ matrix.build-target }} --gitrequired
 
+      - name: get release path
+        id: rel_path
+        run: |
+          RESULT=$( python -c "import build_release; print(build_release.output_path())" )
+          echo "path=$RESULT" >> $GITHUB_OUTPUT
+
       - name: save build release
         uses: actions/upload-artifact@v7
         with:
-          path: '${{ github.workspace }}/src/certwarden/_out/certwarden-*_${{ matrix.build-target }}.*'
+          path: '${{ steps.rel_path.outputs.path }}/certwarden-*_${{ matrix.build-target }}.*'
           archive: false
