@@ -66,7 +66,6 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: '${{ github.workspace }}/src/certwarden'
-          load: ${{ steps.tag_check.outputs.release != 'true' }}
           push: ${{ steps.tag_check.outputs.release == 'true' }}
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
