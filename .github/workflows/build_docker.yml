@@ -85,7 +85,7 @@ jobs:
           # ref: to be set later
           fetch-depth: 0
           path: '${{ github.workspace }}/src/certwarden-frontend'
-          sparse-checkout: go.mod
+          sparse-checkout: '.node-version'
 
       # figure out frontend tag
       - name: determine frontend ref
@@ -110,8 +110,6 @@ jobs:
         id: node_ver
         working-directory: '${{ github.workspace }}/src/certwarden-frontend'
         run: echo "node_ver=$(cat .node-version)"
-
-
 
       # Setup and do building
       - name: Set up QEMU
