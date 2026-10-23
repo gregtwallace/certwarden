@@ -98,7 +98,7 @@ RUN \
     apk add git
 
 # clone repo
-RUN git clone --depth 1 --branch "${VERSION}" https://github.com/gregtwallace/certwarden-backend.git /src/certwarden-backend
+RUN git clone --depth 1 --branch "${VERSION}" https://github.com/gregtwallace/certwarden.git /src/certwarden
 
 # build
 RUN \
