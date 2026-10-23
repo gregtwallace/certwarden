@@ -6,8 +6,6 @@ on:
 
 env:
   THIS_REF: ${{ github.ref }}
-  BACKEND_REF_DEFAULT: master
-  FRONTEND_REF_DEFAULT: master
 
 permissions:
   contents: read
@@ -57,7 +55,7 @@ jobs:
           elif git ls-remote --exit-code origin "${{ github.head_ref || github.ref_name }}"; then
               git checkout "${{ github.head_ref || github.ref_name }}"
           else
-              git checkout "${{ env.BACKEND_REF_DEFAULT }}"
+              git checkout master
           fi
 
       # checkout frontend and select correct ref
@@ -77,7 +75,7 @@ jobs:
           elif git ls-remote --exit-code origin "${{ github.head_ref || github.ref_name }}"; then
               git checkout "${{ github.head_ref || github.ref_name }}"
           else
-              git checkout "${{ env.FRONTEND_REF_DEFAULT }}"
+              git checkout master
           fi
 
       # setup build environment
