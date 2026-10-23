@@ -32,6 +32,19 @@ jobs:
           ref: ${{ env.THIS_REF }}
           fetch-depth: 0
           path: '${{ github.workspace }}/src/certwarden'
+            
+      # get root version
+      - name: determine root ref
+        id: root_ref
+        working-directory: '${{ github.workspace }}/src/certwarden'
+        run: |
+          if [[ ${{ env.THIS_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "version="${{ env.THIS_REF }}" >> $GITHUB_OUTPUT
+          elif git ls-remote --exit-code origin "${{ github.head_ref || github.ref_name }}"; then
+            echo "version="${{ github.head_ref || github.ref_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "version="master" >> $GITHUB_OUTPUT
+          fi
 
       
       # Setup and do building
@@ -71,4 +84,4 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            VERSION=${{ env.THIS_REF }}
+            VERSION=${{ steps.root_ref.outputs.version }}

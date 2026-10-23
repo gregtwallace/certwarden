@@ -25,15 +25,15 @@ ARG NODE_VERSION=24
 
 # default to building most recent tags
 ARG VERSION=master
-ARG BACKEND_VERSION=${VERSION}
-ARG FRONTEND_VERSION=${VERSION}
+ARG BACKEND_VERSION="${VERSION}"
+ARG FRONTEND_VERSION="${VERSION}"
 
 ##
 
 
 
 # Build frontend
-FROM node:${NODE_VERSION}-alpine AS frontend_build
+FROM node:"${NODE_VERSION}"-alpine AS frontend_build
 
 ARG FRONTEND_VERSION
 
@@ -58,7 +58,7 @@ RUN \
 
 
 # Build backend
-FROM golang:${GO_VERSION}-alpine AS backend_build
+FROM golang:"${GO_VERSION}"-alpine AS backend_build
 
 ARG BACKEND_VERSION
 
@@ -79,12 +79,12 @@ RUN \
     export GOOS=$(go env GOOS) && \
     export GOARCH=$(go env GOARCH) && \
     cd /src/certwarden-backend && \
-    python build.py ${GOOS}_${GOARCH} --gitrequired
+    python build.py "${GOOS}_${GOARCH}" --gitrequired
 
 
 
 # "Build" root repo
-FROM alpine:${ALPINE_VERSION} AS root_build
+FROM alpine:"${ALPINE_VERSION}" AS root_build
 
 ARG VERSION
 
@@ -98,10 +98,7 @@ RUN \
     apk add git
 
 # clone repo
-RUN \
-    git clone --depth 1 https://github.com/gregtwallace/certwarden.git /src/certwarden && \
-    cd /src/certwarden && \
-    git checkout ${VERSION}
+RUN git clone --depth 1 --branch "${VERSION}" https://github.com/gregtwallace/certwarden-backend.git /src/certwarden-backend
 
 # build
 RUN \
@@ -111,7 +108,7 @@ RUN \
 
 
 # Make final container
-FROM alpine:${ALPINE_VERSION}
+FROM alpine:"${ALPINE_VERSION}"
 
 WORKDIR /app
 
