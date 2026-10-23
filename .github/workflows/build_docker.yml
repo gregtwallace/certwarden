@@ -107,9 +107,11 @@ jobs:
 
       # get node version
       - name: get node version
-        id: node_ver
+        id: node_v
         working-directory: '${{ github.workspace }}/src/certwarden-frontend'
-        run: echo "node_ver=$(cat .node-version)"
+        run: echo "node_ver=$(head -n 1 .node-version | tr -d '\n')"
+
+
 
       # Setup and do building
       - name: Set up QEMU
@@ -148,7 +150,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            VERSION=${{ steps.root_ref.outputs.backend_version }}
+            VERSION=${{ steps.root_ref.outputs.version }}
             BACKEND_VERSION=${{ steps.backend_ref.outputs.backend_version }}
             FRONTEND_VERSION=${{ steps.frontend_ref.outputs.frontend_version }}
-            NODE_VERSION=${{ steps.node_ver.outputs.node_ver }}
+            NODE_VERSION=${{ steps.node_v.outputs.node_ver }}
