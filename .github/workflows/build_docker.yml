@@ -109,7 +109,7 @@ jobs:
       - name: get node version
         id: node_v
         working-directory: '${{ github.workspace }}/src/certwarden-frontend'
-        run: echo "node_ver=$(head -n 1 .node-version | tr -d '\n')"
+        run: echo "node_ver=$(head -n 1 .node-version | tr -d '\n')" >> $GITHUB_OUTPUT
 
 
 
