@@ -25,8 +25,8 @@ ARG NODE_VERSION=24
 
 # default to building most recent tags
 ARG VERSION=master
-ARG FRONTEND_VERSION=${VERSION}
 ARG BACKEND_VERSION=${VERSION}
+ARG FRONTEND_VERSION=${VERSION}
 
 ##
 
@@ -98,7 +98,10 @@ RUN \
     apk add git
 
 # clone repo
-RUN git clone --depth 1 --branch "${VERSION}" https://github.com/gregtwallace/certwarden.git /src/certwarden
+RUN \
+    git clone --depth 1 https://github.com/gregtwallace/certwarden.git /src/certwarden && \
+    cd /src/certwarden && \
+    git checkout ${VERSION}
 
 # build
 RUN \
