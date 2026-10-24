@@ -1,1 +1,4 @@
-/out
+/__pycache__
+
+/_out
+/_release

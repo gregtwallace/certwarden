@@ -1,0 +1,156 @@
+name: Build Docker Image
+
+on:
+  workflow_dispatch:
+  push:
+
+env:
+  THIS_REF: ${{ github.ref }}
+
+jobs:
+  build-docker:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Determine tag type
+        id: tag_check
+        run: |
+          if [[ ${{ env.THIS_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "release=true" >> $GITHUB_OUTPUT
+          else
+            echo "release=false" >> $GITHUB_OUTPUT
+          fi
+
+      # checkout this repo
+      - name: checkout root repo
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ github.repository }}
+          ref: ${{ env.THIS_REF }}
+          fetch-depth: 0
+          path: '${{ github.workspace }}/src/certwarden'
+
+      # get root version
+      - name: determine root ref
+        id: root_ref
+        working-directory: '${{ github.workspace }}/src/certwarden'
+        run: |
+          if [[ ${{ env.THIS_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "version=${{ env.THIS_REF }}" >> $GITHUB_OUTPUT
+          elif git ls-remote --exit-code origin "${{ github.head_ref || github.ref_name }}"; then
+            echo "version=${{ github.head_ref || github.ref_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=master" >> $GITHUB_OUTPUT
+          fi
+
+      # checkout backend
+      - name: checkout backend repo
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ github.repository_owner }}/certwarden-backend
+          # ref: to be set later
+          fetch-depth: 0
+          path: '${{ github.workspace }}/src/certwarden-backend'
+          sparse-checkout: go.mod
+
+      # figure out backend tag
+      - name: determine backend ref
+        id: backend_ref
+        working-directory: '${{ github.workspace }}/src/certwarden-backend'
+        run: |
+          if [[ ${{ env.THIS_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "backend_version=${{ env.THIS_REF }}" >> $GITHUB_OUTPUT
+          elif git ls-remote --exit-code origin "${{ github.head_ref || github.ref_name }}"; then
+            echo "backend_version=${{ github.head_ref || github.ref_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "backend_version=master" >> $GITHUB_OUTPUT
+          fi
+
+      # checkout backend to proper tag
+      - name: checkout backend to appropriate ref
+        working-directory: '${{ github.workspace }}/src/certwarden-backend'
+        run: git checkout "${{ steps.backend_ref.outputs.backend_version }}"
+
+      # get go version
+      - name: get go version
+        id: go_v
+        working-directory: '${{ github.workspace }}/src/certwarden-backend'
+        run: echo "go_ver=$(awk '/^go /{print $2}' go.mod | tr -d '\n')" >> $GITHUB_OUTPUT
+
+
+
+      # checkout frontend
+      - name: checkout frontend repo
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ github.repository_owner }}/certwarden-frontend
+          # ref: to be set later
+          fetch-depth: 0
+          path: '${{ github.workspace }}/src/certwarden-frontend'
+          sparse-checkout: '.node-version'
+
+      # figure out frontend tag
+      - name: determine frontend ref
+        id: frontend_ref
+        working-directory: '${{ github.workspace }}/src/certwarden-frontend'
+        run: |
+          if [[ ${{ env.THIS_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "frontend_version=${{ env.THIS_REF }}" >> $GITHUB_OUTPUT
+          elif git ls-remote --exit-code origin "${{ github.head_ref || github.ref_name }}"; then
+            echo "frontend_version=${{ github.head_ref || github.ref_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "frontend_version=master" >> $GITHUB_OUTPUT
+          fi
+
+      # checkout frontend to proper tag
+      - name: checkout frontend to appropriate ref
+        working-directory: '${{ github.workspace }}/src/certwarden-frontend'
+        run: git checkout "${{ steps.frontend_ref.outputs.frontend_version }}"
+
+      # get node version
+      - name: get node version
+        id: node_v
+        working-directory: '${{ github.workspace }}/src/certwarden-frontend'
+        run: echo "node_ver=$(head -n 1 .node-version | tr -d '\n')" >> $GITHUB_OUTPUT
+
+
+
+      # Setup and do building
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Log in to the GitHub Container registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: |
+            gregtwallace/certwarden
+            ghcr.io/${{ github.repository }}
+
+      - name: Build and (maybe) push Docker image
+        uses: docker/build-push-action@v7
+        with:
+          context: '${{ github.workspace }}/src/certwarden'
+          push: ${{ steps.tag_check.outputs.release == 'true' }}
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VERSION=${{ steps.root_ref.outputs.version }}
+            BACKEND_VERSION=${{ steps.backend_ref.outputs.backend_version }}
+            FRONTEND_VERSION=${{ steps.frontend_ref.outputs.frontend_version }}
+            GO_VERSION=${{ steps.go_v.outputs.go_ver }}
+            NODE_VERSION=${{ steps.node_v.outputs.node_ver }}
