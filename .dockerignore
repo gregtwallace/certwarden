@@ -1,0 +1,5 @@
+# ignore all (dockerfile clones root repo into itself)
+*
+
+# include dockerfile
+!Dockerfile

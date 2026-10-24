@@ -113,8 +113,8 @@ FROM alpine:"${ALPINE_VERSION}"
 WORKDIR /app
 
 # add LE's new CAs (until they're mainstreamed)
-COPY ./ca/root-ye.pem /usr/local/share/ca-certificates/root-ye.crt
-COPY ./ca/root-yr.pem /usr/local/share/ca-certificates/root-yr.crt
+COPY --from=root_build /src/certwarden/ca/root-ye.pem /usr/local/share/ca-certificates/root-ye.crt
+COPY --from=root_build /src/certwarden/ca/root-yr.pem /usr/local/share/ca-certificates/root-yr.crt
 
 RUN cat /usr/local/share/ca-certificates/root-ye.crt >> /etc/ssl/certs/ca-certificates.crt && \
     cat /usr/local/share/ca-certificates/root-yr.crt >> /etc/ssl/certs/ca-certificates.crt
