@@ -5,45 +5,55 @@ on:
   push:
 
 env:
-  THIS_REF: ${{ github.ref }}
+  ROOT_REF: ${{ github.ref }}
 
 jobs:
-  build-docker:
+  # calculate args that will be used in the build jobs
+  calc-build-args:
     runs-on: ubuntu-24.04
 
+    outputs:
+      is_release: ${{ steps.release_tag_check.outputs.is_release }}
+      root_version: ${{ steps.root_ver.outputs.version }}
+      backend_version: ${{ steps.backend_ver.outputs.backend_version }}
+      go_version: ${{ steps.go_ver.outputs.go_version }}
+      frontend_version: ${{ steps.frontend_ver.outputs.frontend_version }}
+      node_version: ${{ steps.node_ver.outputs.node_version }}
+
     steps:
+      ## 'ref' related
+      # release_tag or not? returns "true" if triggering ref is in the format of a release tag
       - name: Determine tag type
-        id: tag_check
+        id: release_tag_check
         run: |
-          if [[ ${{ env.THIS_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "release=true" >> $GITHUB_OUTPUT
-          else
-            echo "release=false" >> $GITHUB_OUTPUT
+          if [[ ${{ env.ROOT_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "is_release=true" >> $GITHUB_OUTPUT
           fi
 
-      # checkout this repo
+      ## root repo
+      # get root 'version' - checkout root repo & get root version ARG
       - name: checkout root repo
         uses: actions/checkout@v6
         with:
           repository: ${{ github.repository }}
-          ref: ${{ env.THIS_REF }}
+          ref: ${{ env.ROOT_REF }}
           fetch-depth: 0
           path: '${{ github.workspace }}/src/certwarden'
 
-      # get root version
-      - name: determine root ref
-        id: root_ref
+      - name: determine root version
+        id: root_ver
         working-directory: '${{ github.workspace }}/src/certwarden'
         run: |
-          if [[ ${{ env.THIS_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "version=${{ env.THIS_REF }}" >> $GITHUB_OUTPUT
+          if [[ ${{ env.ROOT_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "version=${{ env.ROOT_REF }}" >> $GITHUB_OUTPUT
           elif git ls-remote --exit-code origin "${{ github.head_ref || github.ref_name }}"; then
             echo "version=${{ github.head_ref || github.ref_name }}" >> $GITHUB_OUTPUT
           else
             echo "version=master" >> $GITHUB_OUTPUT
           fi
 
-      # checkout backend
+      ## backend repo
+      # get backend 'version' - checkout backend repo & get backend version ARG
       - name: checkout backend repo
         uses: actions/checkout@v6
         with:
@@ -51,35 +61,33 @@ jobs:
           # ref: to be set later
           fetch-depth: 0
           path: '${{ github.workspace }}/src/certwarden-backend'
+          # only get go.mod since that's the only file we need
           sparse-checkout: go.mod
 
-      # figure out backend tag
-      - name: determine backend ref
-        id: backend_ref
+      - name: determine backend version
+        id: backend_ver
         working-directory: '${{ github.workspace }}/src/certwarden-backend'
         run: |
-          if [[ ${{ env.THIS_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "backend_version=${{ env.THIS_REF }}" >> $GITHUB_OUTPUT
+          if [[ ${{ env.ROOT_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "backend_version=${{ env.ROOT_REF }}" >> $GITHUB_OUTPUT
           elif git ls-remote --exit-code origin "${{ github.head_ref || github.ref_name }}"; then
             echo "backend_version=${{ github.head_ref || github.ref_name }}" >> $GITHUB_OUTPUT
           else
             echo "backend_version=master" >> $GITHUB_OUTPUT
           fi
 
-      # checkout backend to proper tag
+      # determine go version ARG
       - name: checkout backend to appropriate ref
         working-directory: '${{ github.workspace }}/src/certwarden-backend'
-        run: git checkout "${{ steps.backend_ref.outputs.backend_version }}"
+        run: git checkout "${{ steps.backend_ver.outputs.backend_version }}"
 
-      # get go version
       - name: get go version
-        id: go_v
+        id: go_ver
         working-directory: '${{ github.workspace }}/src/certwarden-backend'
-        run: echo "go_ver=$(awk '/^go /{print $2}' go.mod | tr -d '\n')" >> $GITHUB_OUTPUT
+        run: echo "go_version=$(awk '/^go /{print $2}' go.mod | tr -d '\n')" >> $GITHUB_OUTPUT
 
-
-
-      # checkout frontend
+      ## frontend repo
+      # get frontend 'version' - checkout frontend repo & get frontend version ARG
       - name: checkout frontend repo
         uses: actions/checkout@v6
         with:
@@ -87,33 +95,58 @@ jobs:
           # ref: to be set later
           fetch-depth: 0
           path: '${{ github.workspace }}/src/certwarden-frontend'
+          # only get .node-version since that's the only file we need
           sparse-checkout: '.node-version'
 
-      # figure out frontend tag
-      - name: determine frontend ref
-        id: frontend_ref
+      - name: determine frontend version
+        id: frontend_ver
         working-directory: '${{ github.workspace }}/src/certwarden-frontend'
         run: |
-          if [[ ${{ env.THIS_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "frontend_version=${{ env.THIS_REF }}" >> $GITHUB_OUTPUT
+          if [[ ${{ env.ROOT_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "frontend_version=${{ env.ROOT_REF }}" >> $GITHUB_OUTPUT
           elif git ls-remote --exit-code origin "${{ github.head_ref || github.ref_name }}"; then
             echo "frontend_version=${{ github.head_ref || github.ref_name }}" >> $GITHUB_OUTPUT
           else
             echo "frontend_version=master" >> $GITHUB_OUTPUT
           fi
 
-      # checkout frontend to proper tag
+      # determine node version ARG
       - name: checkout frontend to appropriate ref
         working-directory: '${{ github.workspace }}/src/certwarden-frontend'
-        run: git checkout "${{ steps.frontend_ref.outputs.frontend_version }}"
+        run: git checkout "${{ steps.frontend_ver.outputs.frontend_version }}"
 
-      # get node version
       - name: get node version
-        id: node_v
+        id: node_ver
         working-directory: '${{ github.workspace }}/src/certwarden-frontend'
-        run: echo "node_ver=$(head -n 1 .node-version | tr -d '\n')" >> $GITHUB_OUTPUT
+        run: echo "node_version=$(head -n 1 .node-version | tr -d '\n')" >> $GITHUB_OUTPUT
 
 
+
+  # build the actual container outputs
+  build-containers:
+    needs: calc-build-args
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-24.04
+            artifact: linux-amd64
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
+            artifact: linux-arm64
+
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+      - name: checkout root repo
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ github.repository }}
+          ref: ${{ env.ROOT_REF }}
+          fetch-depth: 0
+          path: '${{ github.workspace }}/src/certwarden'
 
       # Setup and do building
       - name: Set up Docker Buildx
@@ -144,13 +177,20 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: '${{ github.workspace }}/src/certwarden'
-          push: ${{ steps.tag_check.outputs.release == 'true' }}
-          platforms: linux/amd64
+          load: true
+          push: ${{ needs.calc-build-args.outputs.is_release == 'true' }}
+          platforms: ${{ matrix.platform }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            VERSION=${{ steps.root_ref.outputs.version }}
-            BACKEND_VERSION=${{ steps.backend_ref.outputs.backend_version }}
-            FRONTEND_VERSION=${{ steps.frontend_ref.outputs.frontend_version }}
-            GO_VERSION=${{ steps.go_v.outputs.go_ver }}
-            NODE_VERSION=${{ steps.node_v.outputs.node_ver }}
+            VERSION=${{ needs.calc-build-args.outputs.root_version }}
+            BACKEND_VERSION=${{ needs.calc-build-args.outputs.backend_version }}
+            GO_VERSION=${{ needs.calc-build-args.outputs.go_version }}
+            FRONTEND_VERSION=${{ needs.calc-build-args.outputs.frontend_version }}
+            NODE_VERSION=${{ needs.calc-build-args.outputs.node_version }}
+
+      # TODO(?): run it and test health endpoint
+
+  # TODO
+  # merge-and-push:
+
