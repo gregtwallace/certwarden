@@ -180,7 +180,9 @@ jobs:
           load: true
           push: ${{ needs.calc-build-args.outputs.is_release == 'true' }}
           platforms: ${{ matrix.platform }}
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            ${{ steps.meta.outputs.tags }}
+            cw-local:ci
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             VERSION=${{ needs.calc-build-args.outputs.root_version }}
@@ -200,7 +202,7 @@ jobs:
             -p 4060:4060/tcp \
             -p 4065:4065/tcp \
             -p 4070:4070/tcp \
-            ${{ steps.meta.outputs.version }}
+            cw-local:ci
 
       # TODO(?): test health endpoint
 
