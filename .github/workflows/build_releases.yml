@@ -4,79 +4,51 @@ on:
   workflow_dispatch:
   push:
 
-env:
-  THIS_REF: ${{ github.ref }}
-
 permissions:
   contents: read
 
 jobs:
   run-build:
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
 
     strategy:
+      # let every target finish so all failures are visible
+      fail-fast: false
       matrix:
         python-version: ['3.14']
         build-target:
-          - "windows_amd64"
+          - 'windows_amd64'
           - 'linux_amd64'
-          - "linux_arm64"
-          - "darwin_amd64"
-          - "darwin_arm64"
-          - "freebsd_amd64"
-          - "freebsd_arm64"
+          - 'linux_arm64'
+          - 'darwin_amd64'
+          - 'darwin_arm64'
+          - 'freebsd_amd64'
+          - 'freebsd_arm64'
 
     steps:
-      # checkout this repo
+      # checkout this repo (defaults to the commit that triggered the workflow)
       - name: checkout root repo
         uses: actions/checkout@v6
         with:
-          repository: ${{ github.repository }}
-          ref: ${{ env.THIS_REF }}
           fetch-depth: 0
+          persist-credentials: false
           path: '${{ github.workspace }}/src/certwarden'
 
-      # checkout backend
+      # backend and frontend are checked out at the matching release tag or branch.
+      # the local action lives in the root repo checked out above, so the path
+      # is relative to the workspace, not the repo root.
       - name: checkout backend repo
-        uses: actions/checkout@v6
+        uses: ./src/certwarden/.github/actions/checkout-matching-ref
         with:
           repository: ${{ github.repository_owner }}/certwarden-backend
-          # ref: to be set later
-          fetch-depth: 0
           path: '${{ github.workspace }}/src/certwarden-backend'
 
-      # checkout backend to the correct ref
-      # use release version if THIS_REF is formatted as "v#.#.#", else try branch name, else use default
-      - name: checkout backend to correct ref
-        working-directory: '${{ github.workspace }}/src/certwarden-backend'
-        run: |
-          if [[ ${{ env.THIS_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-              git checkout "${{ env.THIS_REF }}"
-          elif git ls-remote --exit-code origin "${{ github.head_ref || github.ref_name }}"; then
-              git checkout "${{ github.head_ref || github.ref_name }}"
-          else
-              git checkout master
-          fi
-
-      # checkout frontend and select correct ref
       - name: checkout frontend repo
-        uses: actions/checkout@v6
+        uses: ./src/certwarden/.github/actions/checkout-matching-ref
         with:
           repository: ${{ github.repository_owner }}/certwarden-frontend
-          # ref: to be set later
-          fetch-depth: 0
           path: '${{ github.workspace }}/src/certwarden-frontend'
-
-      - name: checkout frontend to correct ref
-        working-directory: '${{ github.workspace }}/src/certwarden-frontend'
-        run: |
-          if [[ ${{ env.THIS_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-              git checkout "${{ env.THIS_REF }}"
-          elif git ls-remote --exit-code origin "${{ github.head_ref || github.ref_name }}"; then
-              git checkout "${{ github.head_ref || github.ref_name }}"
-          else
-              git checkout master
-          fi
 
       # setup build environment
       - name: Set up Python ${{ matrix.python-version }}

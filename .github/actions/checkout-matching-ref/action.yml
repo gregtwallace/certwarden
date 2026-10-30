@@ -1,0 +1,60 @@
+name: Checkout matching ref
+description: >
+  Check out a sibling repo at the release tag (v#.#.#) or branch that matches
+  the triggering ref, falling back to master.
+
+inputs:
+  repository:
+    description: Repository to check out, as owner/name
+    required: true
+  path:
+    description: Directory to check the repository out into
+    required: true
+  ref-name:
+    description: Branch or tag name to match
+    default: ${{ github.head_ref || github.ref_name }}
+  ref-type:
+    description: Type of the triggering ref ("branch" or "tag")
+    default: ${{ github.ref_type }}
+  sparse-checkout:
+    description: >
+      Optional newline-separated list of files or gitignore-style patterns.
+      When set, only these paths are written to the working tree
+      (history is still fetched in full). When empty, a full checkout is done.
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: checkout ${{ inputs.repository }}
+      uses: actions/checkout@v6
+      with:
+        repository: ${{ inputs.repository }}
+        fetch-depth: 0
+        path: ${{ inputs.path }}
+        persist-credentials: false
+        sparse-checkout: ${{ inputs.sparse-checkout }}
+        # non-cone mode so individual files (not just directories) can be listed
+        sparse-checkout-cone-mode: false
+
+    # use release version if this is a tag formatted as "v#.#.#", else try branch name, else use default
+    - name: select correct ref for ${{ inputs.repository }}
+      shell: bash
+      working-directory: ${{ inputs.path }}
+      env:
+        REF_NAME: ${{ inputs.ref-name }}
+        REF_TYPE: ${{ inputs.ref-type }}
+      run: |
+        set -euo pipefail
+        SEMVER='^v[0-9]+\.[0-9]+\.[0-9]+$'
+        SAFE='^[A-Za-z0-9][A-Za-z0-9._/-]*$'
+
+        if [[ "$REF_TYPE" == "tag" && "$REF_NAME" =~ $SEMVER ]] \
+          && git rev-parse --verify --quiet "refs/tags/${REF_NAME}^{commit}" >/dev/null; then
+          git checkout --detach "refs/tags/${REF_NAME}"
+        elif [[ "$REF_NAME" =~ $SAFE ]] \
+          && git rev-parse --verify --quiet "refs/remotes/origin/${REF_NAME}^{commit}" >/dev/null; then
+          git checkout --detach "refs/remotes/origin/${REF_NAME}"
+        else
+          git checkout --detach refs/remotes/origin/master
+        fi

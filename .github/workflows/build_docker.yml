@@ -55,11 +55,9 @@ jobs:
       ## backend repo
       # get backend 'version' - checkout backend repo & get backend version ARG
       - name: checkout backend repo
-        uses: actions/checkout@v6
+        uses: ./src/certwarden/.github/actions/checkout-matching-ref
         with:
           repository: ${{ github.repository_owner }}/certwarden-backend
-          # ref: to be set later
-          fetch-depth: 0
           path: '${{ github.workspace }}/src/certwarden-backend'
           # only get go.mod since that's the only file we need
           sparse-checkout: go.mod
@@ -89,11 +87,9 @@ jobs:
       ## frontend repo
       # get frontend 'version' - checkout frontend repo & get frontend version ARG
       - name: checkout frontend repo
-        uses: actions/checkout@v6
+        uses: ./src/certwarden/.github/actions/checkout-matching-ref
         with:
           repository: ${{ github.repository_owner }}/certwarden-frontend
-          # ref: to be set later
-          fetch-depth: 0
           path: '${{ github.workspace }}/src/certwarden-frontend'
           # only get .node-version since that's the only file we need
           sparse-checkout: '.node-version'
