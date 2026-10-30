@@ -3,53 +3,54 @@ name: Build Docker Image
 on:
   workflow_dispatch:
   push:
+    branches:
+      - master
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_type != 'tag' }}
+
+permissions:
+  contents: read
 
 env:
-  ROOT_REF: ${{ github.ref }}
+  REF_NAME: ${{ github.head_ref || github.ref_name }}
+  REF_TYPE: ${{ github.ref_type }}
 
 jobs:
   # calculate args that will be used in the build jobs
   calc-build-args:
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
 
     outputs:
-      is_release: ${{ steps.release_tag_check.outputs.is_release }}
-      root_version: ${{ steps.root_ver.outputs.version }}
+      is_release: ${{ steps.release_check.outputs.is_release }}
+      root_version: ${{ env.REF_NAME }}
       backend_version: ${{ steps.backend_ver.outputs.backend_version }}
       go_version: ${{ steps.go_ver.outputs.go_version }}
       frontend_version: ${{ steps.frontend_ver.outputs.frontend_version }}
       node_version: ${{ steps.node_ver.outputs.node_version }}
 
     steps:
-      ## 'ref' related
-      # release_tag or not? returns "true" if triggering ref is in the format of a release tag
-      - name: Determine tag type
-        id: release_tag_check
-        run: |
-          if [[ ${{ env.ROOT_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "is_release=true" >> $GITHUB_OUTPUT
-          fi
-
       ## root repo
       # get root 'version' - checkout root repo & get root version ARG
       - name: checkout root repo
         uses: actions/checkout@v6
         with:
-          repository: ${{ github.repository }}
-          ref: ${{ env.ROOT_REF }}
-          fetch-depth: 0
+          fetch-depth: 1
+          persist-credentials: false
           path: '${{ github.workspace }}/src/certwarden'
 
-      - name: determine root version
-        id: root_ver
-        working-directory: '${{ github.workspace }}/src/certwarden'
+      - name: Determine if release
+        id: release_check
         run: |
-          if [[ ${{ env.ROOT_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "version=${{ env.ROOT_REF }}" >> $GITHUB_OUTPUT
-          elif git ls-remote --exit-code origin "${{ github.head_ref || github.ref_name }}"; then
-            echo "version=${{ github.head_ref || github.ref_name }}" >> $GITHUB_OUTPUT
+          if [[ "$REF_TYPE" == "tag" && "$REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "is_release=true" >> "$GITHUB_OUTPUT"
           else
-            echo "version=master" >> $GITHUB_OUTPUT
+            echo "is_release=false" >> "$GITHUB_OUTPUT"
           fi
 
       ## backend repo
@@ -60,29 +61,41 @@ jobs:
           repository: ${{ github.repository_owner }}/certwarden-backend
           path: '${{ github.workspace }}/src/certwarden-backend'
           # only get go.mod since that's the only file we need
-          sparse-checkout: go.mod
+          sparse-checkout: '/go.mod'
 
       - name: determine backend version
         id: backend_ver
         working-directory: '${{ github.workspace }}/src/certwarden-backend'
         run: |
-          if [[ ${{ env.ROOT_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "backend_version=${{ env.ROOT_REF }}" >> $GITHUB_OUTPUT
-          elif git ls-remote --exit-code origin "${{ github.head_ref || github.ref_name }}"; then
-            echo "backend_version=${{ github.head_ref || github.ref_name }}" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          SEMVER='^v[0-9]+\.[0-9]+\.[0-9]+$'
+          SAFE='^[A-Za-z0-9][A-Za-z0-9._/-]*$'
+
+          if [[ "$REF_TYPE" == "tag" && "$REF_NAME" =~ $SEMVER ]] \
+            && git rev-parse --verify --quiet "refs/tags/${REF_NAME}^{commit}" >/dev/null; then
+            echo "backend_version=$REF_NAME" >> "$GITHUB_OUTPUT"
+          elif [[ "$REF_NAME" =~ $SAFE ]] \
+            && git rev-parse --verify --quiet "refs/remotes/origin/${REF_NAME}^{commit}" >/dev/null; then
+            echo "backend_version=$REF_NAME" >> "$GITHUB_OUTPUT"
           else
-            echo "backend_version=master" >> $GITHUB_OUTPUT
+            echo "backend_version=master" >> "$GITHUB_OUTPUT"
           fi
 
       # determine go version ARG
       - name: checkout backend to appropriate ref
         working-directory: '${{ github.workspace }}/src/certwarden-backend'
-        run: git checkout "${{ steps.backend_ver.outputs.backend_version }}"
+        env:
+          VERSION: ${{ steps.backend_ver.outputs.backend_version }}
+        run: git checkout "$VERSION"
 
       - name: get go version
         id: go_ver
         working-directory: '${{ github.workspace }}/src/certwarden-backend'
-        run: echo "go_version=$(awk '/^go /{print $2}' go.mod | tr -d '\n')" >> $GITHUB_OUTPUT
+        run: |
+          set -euo pipefail
+          GO_VERSION=$(awk '/^go /{print $2}' go.mod | tr -d '\r\n')
+          [[ -n "$GO_VERSION" ]] || { echo "::error::no go version found in go.mod"; exit 1; }
+          echo "go_version=$GO_VERSION" >> "$GITHUB_OUTPUT"
 
       ## frontend repo
       # get frontend 'version' - checkout frontend repo & get frontend version ARG
@@ -92,31 +105,45 @@ jobs:
           repository: ${{ github.repository_owner }}/certwarden-frontend
           path: '${{ github.workspace }}/src/certwarden-frontend'
           # only get .node-version since that's the only file we need
-          sparse-checkout: '.node-version'
+          sparse-checkout: '/.node-version'
 
       - name: determine frontend version
         id: frontend_ver
         working-directory: '${{ github.workspace }}/src/certwarden-frontend'
         run: |
-          if [[ ${{ env.ROOT_REF }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "frontend_version=${{ env.ROOT_REF }}" >> $GITHUB_OUTPUT
-          elif git ls-remote --exit-code origin "${{ github.head_ref || github.ref_name }}"; then
-            echo "frontend_version=${{ github.head_ref || github.ref_name }}" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          SEMVER='^v[0-9]+\.[0-9]+\.[0-9]+$'
+          SAFE='^[A-Za-z0-9][A-Za-z0-9._/-]*$'
+
+          if [[ "$REF_TYPE" == "tag" && "$REF_NAME" =~ $SEMVER ]] \
+            && git rev-parse --verify --quiet "refs/tags/${REF_NAME}^{commit}" >/dev/null; then
+            echo "frontend_version=$REF_NAME" >> "$GITHUB_OUTPUT"
+          elif [[ "$REF_NAME" =~ $SAFE ]] \
+            && git rev-parse --verify --quiet "refs/remotes/origin/${REF_NAME}^{commit}" >/dev/null; then
+            echo "frontend_version=$REF_NAME" >> "$GITHUB_OUTPUT"
           else
-            echo "frontend_version=master" >> $GITHUB_OUTPUT
+            echo "frontend_version=master" >> "$GITHUB_OUTPUT"
           fi
 
       # determine node version ARG
       - name: checkout frontend to appropriate ref
         working-directory: '${{ github.workspace }}/src/certwarden-frontend'
-        run: git checkout "${{ steps.frontend_ver.outputs.frontend_version }}"
+        env:
+          VERSION: ${{ steps.frontend_ver.outputs.frontend_version }}
+        run: git checkout "$VERSION"
 
       - name: get node version
         id: node_ver
         working-directory: '${{ github.workspace }}/src/certwarden-frontend'
-        run: echo "node_version=$(head -n 1 .node-version | tr -d '\n')" >> $GITHUB_OUTPUT
+        run: |
+          set -euo pipefail
+          NODE_VERSION=$(head -n 1 .node-version | tr -d '\r\n')
+          [[ -n "$NODE_VERSION" ]] || { echo "::error::no node version found in .node-version"; exit 1; }
+          echo "node_version=$NODE_VERSION" >> "$GITHUB_OUTPUT"
 
-
+  #
+  #
+  #
 
   # build the actual container outputs
   build-containers:
@@ -134,14 +161,18 @@ jobs:
             artifact: linux-arm64
 
     runs-on: ${{ matrix.runner }}
+    timeout-minutes: 40
+
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: checkout root repo
         uses: actions/checkout@v6
         with:
-          repository: ${{ github.repository }}
-          ref: ${{ env.ROOT_REF }}
-          fetch-depth: 0
+          fetch-depth: 1
+          persist-credentials: false
           path: '${{ github.workspace }}/src/certwarden'
 
       # Setup and do building
@@ -149,12 +180,14 @@ jobs:
         uses: docker/setup-buildx-action@v4
 
       - name: Login to Docker Hub
+        if: ${{ needs.calc-build-args.outputs.is_release == 'true' }}
         uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Log in to the GitHub Container registry
+        if: ${{ needs.calc-build-args.outputs.is_release == 'true' }}
         uses: docker/login-action@v4
         with:
           registry: ghcr.io
@@ -169,16 +202,13 @@ jobs:
             gregtwallace/certwarden
             ghcr.io/${{ github.repository }}
 
-      - name: Build and (maybe) push Docker image
+      - name: Build local Docker image
         uses: docker/build-push-action@v7
         with:
           context: '${{ github.workspace }}/src/certwarden'
           load: true
-          push: ${{ needs.calc-build-args.outputs.is_release == 'true' }}
           platforms: ${{ matrix.platform }}
-          tags: |
-            ${{ steps.meta.outputs.tags }}
-            cw-local:ci
+          tags: cw-local:ci
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             VERSION=${{ needs.calc-build-args.outputs.root_version }}
@@ -186,6 +216,8 @@ jobs:
             GO_VERSION=${{ needs.calc-build-args.outputs.go_version }}
             FRONTEND_VERSION=${{ needs.calc-build-args.outputs.frontend_version }}
             NODE_VERSION=${{ needs.calc-build-args.outputs.node_version }}
+          cache-from: type=gha,scope=${{ github.ref_name }}-certwarden-${{ matrix.artifact }}
+          cache-to: type=gha,mode=max,scope=${{ github.ref_name }}-certwarden-${{ matrix.artifact }}
 
       - name: Run Docker container
         run: |
@@ -202,8 +234,41 @@ jobs:
 
       # TODO(?): test health endpoint
 
+      - name: Build and push Docker image (tagged release only)
+        id: build-push
+        if: ${{ needs.calc-build-args.outputs.is_release == 'true' }}
+        uses: docker/build-push-action@v7
+        with:
+          context: '${{ github.workspace }}/src/certwarden'
+          platforms: ${{ matrix.platform }}
+          outputs: type=image,"name=gregtwallace/certwarden,ghcr.io/${{ github.repository }}",push-by-digest=true,name-canonical=true,push=true
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VERSION=${{ needs.calc-build-args.outputs.root_version }}
+            BACKEND_VERSION=${{ needs.calc-build-args.outputs.backend_version }}
+            GO_VERSION=${{ needs.calc-build-args.outputs.go_version }}
+            FRONTEND_VERSION=${{ needs.calc-build-args.outputs.frontend_version }}
+            NODE_VERSION=${{ needs.calc-build-args.outputs.node_version }}
+          cache-from: type=gha,scope=${{ github.ref_name }}-certwarden-${{ matrix.artifact }}
+          provenance: mode=max
+          sbom: true
 
+      - name: Export digest
+        if: ${{ needs.calc-build-args.outputs.is_release == 'true' }}
+        env:
+          DIGEST: ${{ steps.build-push.outputs.digest }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/digests"
+          touch "$RUNNER_TEMP/digests/${DIGEST#sha256:}"
+
+      - name: Upload digest
+        if: ${{ needs.calc-build-args.outputs.is_release == 'true' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: digests-${{ matrix.artifact }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
 
   # TODO
   # merge-and-push:
-
