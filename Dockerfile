@@ -83,8 +83,8 @@ RUN git clone --depth 1 --branch "${BACKEND_VERSION}" https://github.com/gregtwa
 
 # build (get current OS_ARCH for build)
 RUN \
-    export GOOS=$("${GOOS}":-go env GOOS) && \
-    export GOARCH=$("${GOARCH}":-go env GOARCH) && \
+    export GOOS="${GOOS:-$(go env GOOS)}" && \
+    export GOARCH="${GOARCH:-$(go env GOARCH)}" && \
     cd /src/certwarden-backend && \
     python build.py "${GOOS}_${GOARCH}" --gitrequired
 
