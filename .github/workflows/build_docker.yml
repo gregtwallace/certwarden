@@ -189,7 +189,22 @@ jobs:
             FRONTEND_VERSION=${{ needs.calc-build-args.outputs.frontend_version }}
             NODE_VERSION=${{ needs.calc-build-args.outputs.node_version }}
 
-      # TODO(?): run it and test health endpoint
+      - name: Run Docker container
+        run: |
+          docker run -d \
+            --name cw-test \
+            -e TZ=America/New_York \
+            -v /persist/certwarden:/app/data \
+            -p 80:4050/tcp \
+            -p 443:4055/tcp \
+            -p 4060:4060/tcp \
+            -p 4065:4065/tcp \
+            -p 4070:4070/tcp \
+            ${{ steps.meta.outputs.version }}
+
+      # TODO(?): test health endpoint
+
+
 
   # TODO
   # merge-and-push:
