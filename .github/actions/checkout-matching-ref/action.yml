@@ -23,6 +23,11 @@ inputs:
       (history is still fetched in full). When empty, a full checkout is done.
     default: ''
 
+outputs:
+  ref:
+    description: The tag or branch that was checked out ("master" if neither matched)
+    value: ${{ steps.select.outputs.ref }}
+
 runs:
   using: composite
   steps:
@@ -39,6 +44,7 @@ runs:
 
     # use release version if this is a tag formatted as "v#.#.#", else try branch name, else use default
     - name: select correct ref for ${{ inputs.repository }}
+      id: select
       shell: bash
       working-directory: ${{ inputs.path }}
       env:
@@ -51,10 +57,15 @@ runs:
 
         if [[ "$REF_TYPE" == "tag" && "$REF_NAME" =~ $SEMVER ]] \
           && git rev-parse --verify --quiet "refs/tags/${REF_NAME}^{commit}" >/dev/null; then
+          RESOLVED="$REF_NAME"
           git checkout --detach "refs/tags/${REF_NAME}"
         elif [[ "$REF_NAME" =~ $SAFE ]] \
           && git rev-parse --verify --quiet "refs/remotes/origin/${REF_NAME}^{commit}" >/dev/null; then
+          RESOLVED="$REF_NAME"
           git checkout --detach "refs/remotes/origin/${REF_NAME}"
         else
+          RESOLVED=master
           git checkout --detach refs/remotes/origin/master
         fi
+
+        echo "ref=$RESOLVED" >> "$GITHUB_OUTPUT"

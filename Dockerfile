@@ -1,9 +1,9 @@
 # example build:
-# docker build . --build-arg=VERSION=v0.31.1 -t certwarden:v0.31.1
+# docker build . --build-arg=ROOT_REF=v0.31.1 -t certwarden:v0.31.1
 
 # example master branch build and export
 #   docker builder prune -a 
-#   docker build . --build-arg=VERSION=master -t certwarden:v0.31.2-a1
+#   docker build . --build-arg=ROOT_REF=master -t certwarden:v0.31.2-a1
 #   docker save -o ./out/cw0.31.2-a1.tar certwarden:v0.31.2-a1
 
 # import into docker
@@ -24,9 +24,9 @@ ARG NODE_VERSION=24
 # https://hub.docker.com/_/node
 
 # default to building most recent tags
-ARG VERSION=master
-ARG BACKEND_VERSION="${VERSION}"
-ARG FRONTEND_VERSION="${VERSION}"
+ARG ROOT_REF=master
+ARG BACKEND_REF="${ROOT_REF}"
+ARG FRONTEND_REF="${ROOT_REF}"
 
 # default blank will use the build environment's values
 ARG GOOS=""
@@ -39,7 +39,7 @@ ARG GOARCH=""
 # Build frontend
 FROM node:"${NODE_VERSION}"-alpine AS frontend_build
 
-ARG FRONTEND_VERSION
+ARG FRONTEND_REF
 
 WORKDIR /
 
@@ -51,7 +51,7 @@ RUN \
     apk add git
 
 # clone repo
-RUN git clone --depth 1 --branch "${FRONTEND_VERSION}" https://github.com/gregtwallace/certwarden-frontend.git /src/certwarden-frontend
+RUN git clone --depth 1 --branch "${FRONTEND_REF}" https://github.com/gregtwallace/certwarden-frontend.git /src/certwarden-frontend
 
 # build
 RUN \
@@ -64,7 +64,7 @@ RUN \
 # Build backend
 FROM golang:"${GO_VERSION}"-alpine AS backend_build
 
-ARG BACKEND_VERSION
+ARG BACKEND_REF
 
 ARG GOOS
 ARG GOARCH
@@ -79,7 +79,7 @@ RUN \
     apk add git
 
 # clone repo
-RUN git clone --depth 1 --branch "${BACKEND_VERSION}" https://github.com/gregtwallace/certwarden-backend.git /src/certwarden-backend
+RUN git clone --depth 1 --branch "${BACKEND_REF}" https://github.com/gregtwallace/certwarden-backend.git /src/certwarden-backend
 
 # build (get current OS_ARCH for build)
 RUN \
@@ -93,7 +93,7 @@ RUN \
 # "Build" root repo
 FROM alpine:"${ALPINE_VERSION}" AS root_build
 
-ARG VERSION
+ARG ROOT_REF
 
 WORKDIR /
 
@@ -105,7 +105,7 @@ RUN \
     apk add git
 
 # clone repo
-RUN git clone --depth 1 --branch "${VERSION}" https://github.com/gregtwallace/certwarden.git /src/certwarden
+RUN git clone --depth 1 --branch "${ROOT_REF}" https://github.com/gregtwallace/certwarden.git /src/certwarden
 
 # build
 RUN \
