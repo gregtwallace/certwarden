@@ -28,6 +28,10 @@ ARG VERSION=master
 ARG BACKEND_VERSION="${VERSION}"
 ARG FRONTEND_VERSION="${VERSION}"
 
+# default blank will use the build environment's values
+ARG GOOS=""
+ARG GOARCH=""
+
 ##
 
 
@@ -62,6 +66,9 @@ FROM golang:"${GO_VERSION}"-alpine AS backend_build
 
 ARG BACKEND_VERSION
 
+ARG GOOS
+ARG GOARCH
+
 WORKDIR /
 
 # install python and git
@@ -76,8 +83,8 @@ RUN git clone --depth 1 --branch "${BACKEND_VERSION}" https://github.com/gregtwa
 
 # build (get current OS_ARCH for build)
 RUN \
-    export GOOS=$(go env GOOS) && \
-    export GOARCH=$(go env GOARCH) && \
+    export GOOS=$("${GOOS}":-go env GOOS) && \
+    export GOARCH=$("${GOARCH}":-go env GOARCH) && \
     cd /src/certwarden-backend && \
     python build.py "${GOOS}_${GOARCH}" --gitrequired
 
