@@ -1,0 +1,311 @@
+name: Build Docker Image
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_type != 'tag' }}
+
+permissions:
+  contents: read
+
+env:
+  REF_NAME: ${{ github.head_ref || github.ref_name }}
+  REF_TYPE: ${{ github.ref_type }}
+  IMAGES: |
+    gregtwallace/certwarden
+    ghcr.io/${{ github.repository }}
+
+jobs:
+  # calculate args that will be used in the build jobs
+  calc-build-args:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    outputs:
+      is_release: ${{ steps.release_check.outputs.is_release }}
+      root_ref: ${{ env.REF_NAME }}
+      backend_ref: ${{ steps.backend_checkout.outputs.ref }}
+      go_version: ${{ steps.go_ver.outputs.go_version }}
+      frontend_ref: ${{ steps.frontend_checkout.outputs.ref }}
+      node_version: ${{ steps.node_ver.outputs.node_version }}
+
+    steps:
+      ## root repo
+      # get root 'version' - checkout root repo & get root version ARG
+      - name: checkout root repo
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+          path: '${{ github.workspace }}/src/certwarden'
+
+      - name: Determine if release
+        id: release_check
+        run: |
+          if [[ "$REF_TYPE" == "tag" && "$REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "is_release=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_release=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      ## backend repo
+      # get backend version and go ARGs
+      - name: checkout backend repo
+        id: backend_checkout
+        uses: ./src/certwarden/.github/actions/checkout-matching-ref
+        with:
+          repository: ${{ github.repository_owner }}/certwarden-backend
+          path: '${{ github.workspace }}/src/certwarden-backend'
+          # only get go.mod since that's the only file we need
+          sparse-checkout: '/go.mod'
+
+      - name: get go version
+        id: go_ver
+        working-directory: '${{ github.workspace }}/src/certwarden-backend'
+        run: |
+          set -euo pipefail
+          GO_VERSION=$(awk '/^go /{print $2}' go.mod | tr -d '\r\n')
+          [[ -n "$GO_VERSION" ]] || { echo "::error::no go version found in go.mod"; exit 1; }
+          echo "go_version=$GO_VERSION" >> "$GITHUB_OUTPUT"
+
+      ## frontend repo
+      # get frontend version and node ARGs
+      - name: checkout frontend repo
+        id: frontend_checkout
+        uses: ./src/certwarden/.github/actions/checkout-matching-ref
+        with:
+          repository: ${{ github.repository_owner }}/certwarden-frontend
+          path: '${{ github.workspace }}/src/certwarden-frontend'
+          # only get .node-version since that's the only file we need
+          sparse-checkout: '/.node-version'
+
+      - name: get node version
+        id: node_ver
+        working-directory: '${{ github.workspace }}/src/certwarden-frontend'
+        run: |
+          set -euo pipefail
+          NODE_VERSION=$(head -n 1 .node-version | tr -d '\r\n')
+          [[ -n "$NODE_VERSION" ]] || { echo "::error::no node version found in .node-version"; exit 1; }
+          echo "node_version=$NODE_VERSION" >> "$GITHUB_OUTPUT"
+
+  # build the actual container outputs
+  #
+  build-containers:
+    needs: calc-build-args
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-24.04
+            artifact: linux-amd64
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
+            artifact: linux-arm64
+
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 40
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: checkout root repo
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+          path: '${{ github.workspace }}/src/certwarden'
+
+      # Setup and do building
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Login to Docker Hub
+        if: ${{ needs.calc-build-args.outputs.is_release == 'true' }}
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Log in to the GitHub Container registry
+        if: ${{ needs.calc-build-args.outputs.is_release == 'true' }}
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.IMAGES }}
+
+      - name: Build local Docker image
+        uses: docker/build-push-action@v7
+        with:
+          context: '${{ github.workspace }}/src/certwarden'
+          load: true
+          platforms: ${{ matrix.platform }}
+          tags: cw-local:ci
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            ROOT_REF=${{ needs.calc-build-args.outputs.root_ref }}
+            BACKEND_REF=${{ needs.calc-build-args.outputs.backend_ref }}
+            GO_VERSION=${{ needs.calc-build-args.outputs.go_version }}
+            FRONTEND_REF=${{ needs.calc-build-args.outputs.frontend_ref }}
+            NODE_VERSION=${{ needs.calc-build-args.outputs.node_version }}
+          cache-from: type=gha,scope=${{ matrix.artifact }}-certwarden
+          cache-to: type=gha,mode=max,scope=${{ matrix.artifact }}-certwarden
+
+      - name: Run Docker container
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/cw-data"
+
+          docker run -d \
+            --name cw-test \
+            -e TZ=America/New_York \
+            -v "$RUNNER_TEMP/cw-data:/app/data" \
+            -p 80:4050/tcp \
+            -p 443:4055/tcp \
+            -p 4060:4060/tcp \
+            -p 4065:4065/tcp \
+            -p 4070:4070/tcp \
+            cw-local:ci
+
+      - name: Wait for healthy
+        run: |
+          for _ in $(seq 1 40); do
+            [[ "$(docker inspect -f '{{.State.Health.Status}}' cw-test)" == "healthy" ]] && exit 0
+            [[ "$(docker inspect -f '{{.State.Running}}' cw-test)" == "true" ]] || break
+            sleep 3
+          done
+          docker logs cw-test
+          exit 1
+
+      - name: Build image list
+        if: ${{ needs.calc-build-args.outputs.is_release == 'true' }}
+        id: images
+        run: echo "csv=$(printf '%s\n' "$IMAGES" | sed '/^$/d' | paste -sd, -)" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push Docker image (tagged release only)
+        id: build-push
+        if: ${{ needs.calc-build-args.outputs.is_release == 'true' }}
+        uses: docker/build-push-action@v7
+        with:
+          context: '${{ github.workspace }}/src/certwarden'
+          platforms: ${{ matrix.platform }}
+          outputs: type=image,"name=${{ steps.images.outputs.csv }}",push-by-digest=true,name-canonical=true,push=true
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            ROOT_REF=${{ needs.calc-build-args.outputs.root_ref }}
+            BACKEND_REF=${{ needs.calc-build-args.outputs.backend_ref }}
+            GO_VERSION=${{ needs.calc-build-args.outputs.go_version }}
+            FRONTEND_REF=${{ needs.calc-build-args.outputs.frontend_ref }}
+            NODE_VERSION=${{ needs.calc-build-args.outputs.node_version }}
+          cache-from: type=gha,scope=${{ matrix.artifact }}-certwarden
+          provenance: mode=max
+          sbom: true
+
+      - name: Export digest
+        if: ${{ needs.calc-build-args.outputs.is_release == 'true' }}
+        env:
+          DIGEST: ${{ steps.build-push.outputs.digest }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/digests"
+          touch "$RUNNER_TEMP/digests/${DIGEST#sha256:}"
+
+      - name: Upload digest
+        if: ${{ needs.calc-build-args.outputs.is_release == 'true' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: digests-${{ matrix.artifact }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  # actually publish the release (it its a release)
+  #
+  merge-and-push:
+    needs:
+      - calc-build-args
+      - build-containers
+
+    # only runs if every build-containers matrix job succeeded
+    if: ${{ needs.calc-build-args.outputs.is_release == 'true' }}
+
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Download digests
+        uses: actions/download-artifact@v7
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-*
+          merge-multiple: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Log in to the GitHub Container registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # sets DOCKER_METADATA_OUTPUT_JSON, which the next step reads for the tag list
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.IMAGES }}
+
+      - name: Create manifest list and push
+        working-directory: ${{ runner.temp }}/digests
+        run: |
+          set -euo pipefail
+
+          # one manifest list per image name, tagged with only that image's tags
+          mapfile -t images < <(printf '%s\n' "$IMAGES" | sed '/^$/d')
+          for image in "${images[@]}"; do
+            tag_args=$(jq -cr --arg img "$image" \
+              '.tags | map(select(startswith($img + ":"))) | map("-t " + .) | join(" ")' \
+              <<< "$DOCKER_METADATA_OUTPUT_JSON")
+
+            # one source per digest file (one per platform); unquoted on purpose for word splitting
+            docker buildx imagetools create $tag_args \
+              $(printf "${image}@sha256:%s " *)
+          done
+
+      - name: Inspect images
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          set -euo pipefail
+          mapfile -t images < <(printf '%s\n' "$IMAGES" | sed '/^$/d')
+          for image in "${images[@]}"; do
+            docker buildx imagetools inspect "${image}:${VERSION}"
+          done
