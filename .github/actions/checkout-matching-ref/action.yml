@@ -1,7 +1,7 @@
 name: Checkout matching ref
 description: >
   Check out a sibling repo at the release tag (v#.#.#) or branch that matches
-  the triggering ref, falling back to master.
+  the triggering ref, falling back to master (if not a tag).
 
 inputs:
   repository:
@@ -25,7 +25,8 @@ inputs:
 
 outputs:
   ref:
-    description: The tag or branch that was checked out ("master" if neither matched)
+    description: The tag or branch that was checked out ("master" if neither matched and
+      not a release tag)
     value: ${{ steps.select.outputs.ref }}
 
 runs:
@@ -50,13 +51,15 @@ runs:
       env:
         REF_NAME: ${{ inputs.ref-name }}
         REF_TYPE: ${{ inputs.ref-type }}
+        REPO: ${{ inputs.repository }}
       run: |
         set -euo pipefail
         SEMVER='^v[0-9]+\.[0-9]+\.[0-9]+$'
         SAFE='^[A-Za-z0-9][A-Za-z0-9._/-]*$'
 
-        if [[ "$REF_TYPE" == "tag" && "$REF_NAME" =~ $SEMVER ]] \
-          && git rev-parse --verify --quiet "refs/tags/${REF_NAME}^{commit}" >/dev/null; then
+        if [[ "$REF_TYPE" == "tag" && "$REF_NAME" =~ $SEMVER ]]; then
+          git rev-parse --verify --quiet "refs/tags/${REF_NAME}^{commit}" >/dev/null \
+            || { echo "::error::tag ${REF_NAME} not found in ${REPO}"; exit 1; }
           RESOLVED="$REF_NAME"
           git checkout --detach "refs/tags/${REF_NAME}"
         elif [[ "$REF_NAME" =~ $SAFE ]] \

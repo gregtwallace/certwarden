@@ -26,6 +26,10 @@ env:
 jobs:
   # calculate args that will be used in the build jobs
   calc-build-args:
+
+    # fork PRs can't build: the Dockerfile clones the PR's branch from this repo
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+
     runs-on: ubuntu-24.04
     timeout-minutes: 10
 
@@ -92,7 +96,7 @@ jobs:
         working-directory: '${{ github.workspace }}/src/certwarden-frontend'
         run: |
           set -euo pipefail
-          NODE_VERSION=$(head -n 1 .node-version | tr -d '\r\n')
+          NODE_VERSION=$(head -n 1 .node-version | tr -d '\r\n' | sed 's/^v//')
           [[ -n "$NODE_VERSION" ]] || { echo "::error::no node version found in .node-version"; exit 1; }
           echo "node_version=$NODE_VERSION" >> "$GITHUB_OUTPUT"
 
@@ -166,8 +170,8 @@ jobs:
             GO_VERSION=${{ needs.calc-build-args.outputs.go_version }}
             FRONTEND_REF=${{ needs.calc-build-args.outputs.frontend_ref }}
             NODE_VERSION=${{ needs.calc-build-args.outputs.node_version }}
-          cache-from: type=gha,scope=${{ matrix.artifact }}-certwarden
-          cache-to: type=gha,mode=max,scope=${{ matrix.artifact }}-certwarden
+          cache-from: type=gha,scope=${{ matrix.artifact }}-${{ github.run_id }}-${{ github.run_attempt }}
+          cache-to: ${{ needs.calc-build-args.outputs.is_release == 'true' && format('type=gha,mode=max,scope={0}-{1}-{2}', matrix.artifact, github.run_id, github.run_attempt) || '' }}
 
       - name: Run Docker container
         run: |
@@ -215,7 +219,7 @@ jobs:
             GO_VERSION=${{ needs.calc-build-args.outputs.go_version }}
             FRONTEND_REF=${{ needs.calc-build-args.outputs.frontend_ref }}
             NODE_VERSION=${{ needs.calc-build-args.outputs.node_version }}
-          cache-from: type=gha,scope=${{ matrix.artifact }}-certwarden
+          cache-from: type=gha,scope=${{ matrix.artifact }}-${{ github.run_id }}-${{ github.run_attempt }}
           provenance: mode=max
           sbom: true
 
