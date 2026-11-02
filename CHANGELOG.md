@@ -1,5 +1,39 @@
 # Cert Warden Changelog
 
+## [v0.31.0] - 2026-11-01
+
+Lots of work went into this release. Most of it isn't user facing, but the
+build system has been streamlined and my life should (hopefully) be a little
+easier moving forward.
+
+## Fixed
+- Fix issue where Certwarden would error if the ACME Server doesn't support
+  GETing challenges.
+- Address several CVEs.
+
+## Added
+- Add python build scripts for frontend, backend, and main repos.
+- Added python script to process new versions of acme.sh.
+- Add HEAD to acme.sh script folder for tracking purposes.
+
+## Changed
+- Improved validation pkg tests.
+- Updated backend go to 1.27.3.
+- Updated backend acme.sh to 3.1.6.
+- Updated backend go-acme/lego to 5.5.2.
+- Updated frontend follow-redirects to 1.16.1.
+- Updated frontend vite to 8.3.5.
+- Updated frontend axios to 1.21.0.
+- Updated frontend vitest to 4.1.12.
+- Updated frontend brace-expansion to 1.1.21.
+- Updated frontend js-yaml to 4.3.2.
+- Updated frontend zod to 4.6.7.
+
+## Removed
+- Removed CGO dependency. Backend storage now uses `modernc.org/sqlite` which
+  makes building significantly easier.
+
+
 ## [v0.30.1] - 2026-09-04
 
 Quick fix for status queue pages. Thanks @beejaygee.
