@@ -3,436 +3,99 @@ name: Build Releases
 on:
   workflow_dispatch:
   push:
-    'tags':
-      - 'v*'
+    branches:
+      - master
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+  pull_request:
 
-env:
-  GITHUB_REF: ${{ github.ref }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_type != 'tag' }}
+
+permissions:
+  contents: read
 
 jobs:
-  build-common:
+  release-build:
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    strategy:
+      # let every target finish so all failures are visible
+      fail-fast: false
+      matrix:
+        python-version: ['3.14']
+        build-target:
+          - 'windows_amd64'
+          - 'linux_amd64'
+          - 'linux_arm64'
+          - 'darwin_amd64'
+          - 'darwin_arm64'
+          - 'freebsd_amd64'
+          - 'freebsd_arm64'
 
     steps:
-      - name: Checkout Main Repo
+      # checkout this repo (defaults to the commit that triggered the workflow)
+      - name: checkout root repo
         uses: actions/checkout@v6
         with:
-          repository: gregtwallace/certwarden
-          ref: ${{ env.GITHUB_REF }}
           fetch-depth: 0
+          persist-credentials: false
+          path: '${{ github.workspace }}/src/certwarden'
 
-      - name: Save README
-        uses: actions/upload-artifact@v7
+      # backend and frontend are checked out at the matching release tag or branch.
+      # the local action lives in the root repo checked out above, so the path
+      # is relative to the workspace, not the repo root.
+      - name: checkout backend repo
+        uses: ./src/certwarden/.github/actions/checkout-matching-ref
         with:
-          name: README.md
-          path: ./README.md
+          repository: ${{ github.repository_owner }}/certwarden-backend
+          path: '${{ github.workspace }}/src/certwarden-backend'
 
-      - name: Save LICENSE
-        uses: actions/upload-artifact@v7
+      - name: checkout frontend repo
+        uses: ./src/certwarden/.github/actions/checkout-matching-ref
         with:
-          name: LICENSE.md
-          path: ./LICENSE.md
+          repository: ${{ github.repository_owner }}/certwarden-frontend
+          path: '${{ github.workspace }}/src/certwarden-frontend'
 
-      - name: Save CHANGELOG
-        uses: actions/upload-artifact@v7
+      # setup build environment
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v7
         with:
-          name: CHANGELOG.md
-          path: ./CHANGELOG.md
+          python-version: ${{ matrix.python-version }}
 
-  build-frontend:
-    runs-on: ubuntu-24.04
-
-    steps:
-      - name: Checkout Frontend Repo
-        uses: actions/checkout@v6
+      - name: Set up Go
+        uses: actions/setup-go@v6
         with:
-          repository: gregtwallace/certwarden-frontend
-          ref: ${{ env.GITHUB_REF }}
-          fetch-depth: 0
+          go-version-file: '${{ github.workspace }}/src/certwarden-backend/go.mod'
+          cache-dependency-path: '${{ github.workspace }}/src/certwarden-backend/go.sum'
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version-file: '.node-version'
+          # apparently doesn't like absolute path
+          node-version-file: 'src/certwarden-frontend/.node-version'
           cache: 'npm'
+          cache-dependency-path: 'src/certwarden-frontend/package-lock.json'
 
-      - run: npm ci
+      - name: get frontend pkgs
+        working-directory: '${{ github.workspace }}/src/certwarden-frontend'
+        run: npm ci
 
-      - run: npm run build
-        env:
-          CI: false
+      - name: Build using build script
+        working-directory: '${{ github.workspace }}/src/certwarden'
+        run: python build_release.py ${{ matrix.build-target }} --gitrequired
 
-      - name: Archive npm failure logs
-        uses: actions/upload-artifact@v7
-        if: failure()
-        with:
-          name: npm-logs
-          path: ~/.npm/_logs
-
-      - name: Save Compiled React App
-        uses: actions/upload-artifact@v7
-        with:
-          name: frontend_build
-          path: ./dist
-
-  build-backend-common:
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout Backend Repo
-        uses: actions/checkout@v6
-        with:
-          repository: gregtwallace/certwarden-backend
-          ref: ${{ env.GITHUB_REF }}
-          fetch-depth: 0
-
-      - name: Save Default Config
-        uses: actions/upload-artifact@v7
-        with:
-          name: config.default.yaml
-          path: ./config.default.yaml
-
-      - name: Save Example Config
-        uses: actions/upload-artifact@v7
-        with:
-          name: config.example.yaml
-          path: ./config.example.yaml
-
-      - name: Save Config Changelog
-        uses: actions/upload-artifact@v7
-        with:
-          name: config.changelog.md
-          path: ./config.changelog.md
-
-      - name: Save Scripts (Linux)
-        uses: actions/upload-artifact@v7
-        with:
-          name: scripts-linux
-          path: ./scripts/linux
-
-      - name: Save Scripts (Windows)
-        uses: actions/upload-artifact@v7
-        with:
-          name: scripts-windows
-          path: ./scripts/windows
-
-  build-backend-linux-arm64:
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout Backend Repo
-        uses: actions/checkout@v6
-        with:
-          repository: gregtwallace/certwarden-backend
-          ref: ${{ env.GITHUB_REF }}
-          fetch-depth: 0
-
-      - name: Update apt
-        run: sudo apt update
-
-      - name: Set up Go
-        uses: actions/setup-go@v6
-        with:
-          go-version-file: 'go.mod'
-
-      - name: Build
-        run: go build -o ./certwarden -v ./cmd/api-server
-        env:
-          GOOS: linux
-          GOARCH: arm64
-
-      - name: Save Compiled Binary
-        uses: actions/upload-artifact@v7
-        with:
-          name: certwarden-linux-arm64
-          path: ./certwarden
-
-  build-backend-linux-amd64:
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout Backend Repo
-        uses: actions/checkout@v6
-        with:
-          repository: gregtwallace/certwarden-backend
-          ref: ${{ env.GITHUB_REF }}
-          fetch-depth: 0
-
-      - name: Set up Go
-        uses: actions/setup-go@v6
-        with:
-          go-version-file: 'go.mod'
-
-      - name: Build
-        run: go build -o ./certwarden -v ./cmd/api-server
-        env:
-          GOOS: linux
-          GOARCH: amd64
-
-      - name: Save Compiled Binary
-        uses: actions/upload-artifact@v7
-        with:
-          name: certwarden-linux-amd64
-          path: ./certwarden
-
-  build-backend-windows-amd64:
-    runs-on: windows-2022
-    steps:
-      - name: Checkout Backend Repo
-        uses: actions/checkout@v6
-        with:
-          repository: gregtwallace/certwarden-backend
-          ref: ${{ env.GITHUB_REF }}
-          fetch-depth: 0
-
-      - name: Set up Go
-        uses: actions/setup-go@v6
-        with:
-          go-version-file: 'go.mod'
-
-      - name: Build
-        run: go build -o ./certwarden.exe -v ./cmd/api-server
-        env:
-          GOOS: windows
-          GOARCH: amd64
-
-      - name: Save Compiled Binary
-        uses: actions/upload-artifact@v7
-        with:
-          name: certwarden-windows-amd64
-          path: ./certwarden.exe
-
-  release-file-linux-arm64:
-    needs:
-      [
-        build-common,
-        build-frontend,
-        build-backend-common,
-        build-backend-linux-arm64,
-      ]
-    runs-on: ubuntu-24.04
-
-    steps:
-      - name: Make release directory
-        run: mkdir ./release
-
-      - name: Download Frontend
-        uses: actions/download-artifact@v8
-        with:
-          name: frontend_build
-          path: ./release/frontend_build
-
-      - name: Download Backend Default Config
-        uses: actions/download-artifact@v8
-        with:
-          name: config.default.yaml
-          path: ./release
-
-      - name: Download Backend Example Config
-        uses: actions/download-artifact@v8
-        with:
-          name: config.example.yaml
-          path: ./release
-
-      - name: Download Config Changelog
-        uses: actions/download-artifact@v8
-        with:
-          name: config.changelog.md
-          path: ./release
-
-      - name: Download Linux Scripts
-        uses: actions/download-artifact@v8
-        with:
-          name: scripts-linux
-          path: ./release/scripts
-
-      - name: Download Backend Binary
-        uses: actions/download-artifact@v8
-        with:
-          name: certwarden-linux-arm64
-          path: ./release
-
-      - name: Download README
-        uses: actions/download-artifact@v8
-        with:
-          name: README.md
-          path: ./release
-
-      - name: Download LICENSE
-        uses: actions/download-artifact@v8
-        with:
-          name: LICENSE.md
-          path: ./release
-
-      - name: Download CHANGELOG
-        uses: actions/download-artifact@v8
-        with:
-          name: CHANGELOG.md
-          path: ./release
-
-      - name: Set script permissions
+      - name: get release path
+        id: rel_path
+        working-directory: '${{ github.workspace }}/src/certwarden'
         run: |
-          find ./release/scripts -type f -name "*.sh" -print0 | xargs -0 chmod 755
+          RESULT=$( python -c "import build_release; print(build_release.output_path())" )
+          echo "path=$RESULT" >> "$GITHUB_OUTPUT"
 
-      - name: Tar files (preserves permissions)
-        run: |
-          tar -cvf certwarden_linux_arm64.tar ./release
-
-      - name: Save Release
+      - name: save build release
         uses: actions/upload-artifact@v7
         with:
-          name: certwarden_linux_arm64
-          path: certwarden_linux_arm64.tar
-
-  release-file-linux-amd64:
-    needs:
-      [
-        build-common,
-        build-frontend,
-        build-backend-common,
-        build-backend-linux-amd64,
-      ]
-    runs-on: ubuntu-24.04
-
-    steps:
-      - name: Make release directory
-        run: mkdir ./release
-
-      - name: Download Frontend
-        uses: actions/download-artifact@v8
-        with:
-          name: frontend_build
-          path: ./release/frontend_build
-
-      - name: Download Backend Default Config
-        uses: actions/download-artifact@v8
-        with:
-          name: config.default.yaml
-          path: ./release
-
-      - name: Download Backend Example Config
-        uses: actions/download-artifact@v8
-        with:
-          name: config.example.yaml
-          path: ./release
-
-      - name: Download Config Changelog
-        uses: actions/download-artifact@v8
-        with:
-          name: config.changelog.md
-          path: ./release
-
-      - name: Download Linux Scripts
-        uses: actions/download-artifact@v8
-        with:
-          name: scripts-linux
-          path: ./release/scripts
-
-      - name: Download Backend Binary
-        uses: actions/download-artifact@v8
-        with:
-          name: certwarden-linux-amd64
-          path: ./release
-
-      - name: Download README
-        uses: actions/download-artifact@v8
-        with:
-          name: README.md
-          path: ./release
-
-      - name: Download LICENSE
-        uses: actions/download-artifact@v8
-        with:
-          name: LICENSE.md
-          path: ./release
-
-      - name: Download CHANGELOG
-        uses: actions/download-artifact@v8
-        with:
-          name: CHANGELOG.md
-          path: ./release
-
-      - name: Set script permissions
-        run: |
-          find ./release/scripts -type f -name "*.sh" -print0 | xargs -0 chmod 755
-
-      - name: Tar files (preserves permissions)
-        run: |
-          tar -cvf certwarden_linux_amd64.tar ./release
-
-      - name: Save Release
-        uses: actions/upload-artifact@v7
-        with:
-          name: certwarden_linux_amd64
-          path: certwarden_linux_amd64.tar
-
-  release-file-windows-amd64:
-    needs:
-      [
-        build-common,
-        build-frontend,
-        build-backend-common,
-        build-backend-windows-amd64,
-      ]
-    runs-on: ubuntu-24.04
-
-    steps:
-      - name: Make release directory
-        run: mkdir ./release
-
-      - name: Download Frontend
-        uses: actions/download-artifact@v8
-        with:
-          name: frontend_build
-          path: ./release/frontend_build
-
-      - name: Download Backend Default Config
-        uses: actions/download-artifact@v8
-        with:
-          name: config.default.yaml
-          path: ./release
-
-      - name: Download Backend Example Config
-        uses: actions/download-artifact@v8
-        with:
-          name: config.example.yaml
-          path: ./release
-
-      - name: Download Config Changelog
-        uses: actions/download-artifact@v8
-        with:
-          name: config.changelog.md
-          path: ./release
-
-      - name: Download Windows Scripts
-        uses: actions/download-artifact@v8
-        with:
-          name: scripts-windows
-          path: ./release/scripts
-
-      - name: Download Backend Binary
-        uses: actions/download-artifact@v8
-        with:
-          name: certwarden-windows-amd64
-          path: ./release
-
-      - name: Download README
-        uses: actions/download-artifact@v8
-        with:
-          name: README.md
-          path: ./release
-
-      - name: Download LICENSE
-        uses: actions/download-artifact@v8
-        with:
-          name: LICENSE.md
-          path: ./release
-
-      - name: Download CHANGELOG
-        uses: actions/download-artifact@v8
-        with:
-          name: CHANGELOG.md
-          path: ./release
-
-      - name: Save Release
-        uses: actions/upload-artifact@v7
-        with:
-          name: certwarden_windows_amd64
-          path: ./release
+          path: '${{ steps.rel_path.outputs.path }}/certwarden-*_${{ matrix.build-target }}.*'
+          archive: false

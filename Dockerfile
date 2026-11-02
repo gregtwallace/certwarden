@@ -1,92 +1,147 @@
 # example build:
-# docker build . --build-arg=BACKEND_VERSION=v0.8.0 --build-arg=FRONTEND_VERSION=v0.8.0 -t certwarden:v0.8.0
+# docker build . --build-arg=ROOT_REF=v0.31.1 -t certwarden:v0.31.1
 
 # example master branch build and export
 #   docker builder prune -a 
-#   docker build . --build-arg=BACKEND_VERSION=master --build-arg=FRONTEND_VERSION=master -t certwarden:v0.24.5-a1
-#   docker save -o ./out/cw0.24.5-a1.tar certwarden:v0.24.5-a1
+#   docker build . --build-arg=ROOT_REF=master -t certwarden:v0.31.2-a1
+#   docker save -o ./out/cw0.31.2-a1.tar certwarden:v0.31.2-a1
+
 # import into docker
-#   docker load -i ./cw0.24.5-a1.tar
+#   docker load -i ./cw0.31.2-a1.tar
 
 # example run
 # docker run -d --name certwarden -e TZ=Europe/Stockholm -v ./data:/app/data -p 4050:4050 -p 4055:4055 -p 4060:4060 -p 4065:4065 -p 4070:4070 ghcr.io/gregtwallace/certwarden:latest
 
-# Versions - keep in sync with build_releases.yml, frontend/.node-version, and go.mod
-ARG ALPINE_VERSION=3.24
-ARG GO_VERSION=1.26.5
-ARG NODE_VERSION=24.19.0
+# Versions
+# The resulting container's alpine version
+ARG ALPINE_VERSION=3.24.2
 # https://hub.docker.com/_/alpine
+
+# used in build containers -- major version defaults that will be overridden by github actions
+ARG GO_VERSION=1
+ARG NODE_VERSION=24
 # https://hub.docker.com/_/golang
 # https://hub.docker.com/_/node
 
-FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS frontend_build
+# default to building most recent tags
+ARG ROOT_REF=master
+ARG BACKEND_REF="${ROOT_REF}"
+ARG FRONTEND_REF="${ROOT_REF}"
 
-ARG FRONTEND_VERSION
+# default blank will use the build environment's values
+ARG GOOS=""
+ARG GOARCH=""
+
+##
+
+
+
+# Build frontend
+FROM node:${NODE_VERSION}-alpine AS frontend_build
+
+ARG FRONTEND_REF
 
 WORKDIR /
 
-RUN apk add git && \
-    git clone --depth 1 --branch "${FRONTEND_VERSION}" https://github.com/gregtwallace/certwarden-frontend.git /src && \
-    cd /src && \
-    npm clean-install && \
-    npm run build
+# install python and git (build.py needs python)
+RUN apk add --no-cache python3 git && \
+    ln -sf python3 /usr/bin/python
+
+# clone repo
+RUN git clone --depth 1 --branch "${FRONTEND_REF}" https://github.com/gregtwallace/certwarden-frontend.git /src/certwarden-frontend
+
+# build
+RUN \
+    cd /src/certwarden-frontend && \
+    npm ci && \
+    python build.py --gitrequired
 
 
-FROM golang:${GO_VERSION}-alpine${ALPINE_VERSION} AS backend_build
 
-ARG BACKEND_VERSION
+# Build backend
+FROM golang:${GO_VERSION}-alpine AS backend_build
+
+ARG BACKEND_REF
+
+ARG GOOS
+ARG GOARCH
 
 WORKDIR /
 
-RUN apk add git && \
-    git clone --depth 1 --branch "${BACKEND_VERSION}" https://github.com/gregtwallace/certwarden-backend.git /src && \
-    cd /src && \
-    go build -o ./certwarden ./cmd/api-server
+# install python and git (build.py needs python)
+RUN apk add --no-cache python3 git && \
+    ln -sf python3 /usr/bin/python
+
+# clone repo
+RUN git clone --depth 1 --branch "${BACKEND_REF}" https://github.com/gregtwallace/certwarden-backend.git /src/certwarden-backend
+
+# build (get current OS_ARCH for build)
+RUN \
+    export GOOS="${GOOS:-$(go env GOOS)}" && \
+    export GOARCH="${GOARCH:-$(go env GOARCH)}" && \
+    cd /src/certwarden-backend && \
+    python build.py "${GOOS}_${GOARCH}" --gitrequired
 
 
+
+# "Build" root repo
+FROM alpine:${ALPINE_VERSION} AS root_build
+
+ARG ROOT_REF
+
+WORKDIR /
+
+# install python and git (build.py needs python)
+RUN apk add --no-cache python3 git && \
+    ln -sf python3 /usr/bin/python
+
+# clone repo
+RUN git clone --depth 1 --branch "${ROOT_REF}" https://github.com/gregtwallace/certwarden.git /src/certwarden
+
+# build
+RUN \
+    cd /src/certwarden && \
+    python build.py --gitrequired
+
+
+
+# Make final container
 FROM alpine:${ALPINE_VERSION}
 
 WORKDIR /app
 
-# add LE's new CAs
-COPY ./ca/root-ye.pem /usr/local/share/ca-certificates/root-ye.crt
-COPY ./ca/root-yr.pem /usr/local/share/ca-certificates/root-yr.crt
+# add LE's new CAs (until they're mainstreamed)
+COPY --from=root_build /src/certwarden/ca/root-ye.pem /usr/local/share/ca-certificates/root-ye.crt
+COPY --from=root_build /src/certwarden/ca/root-yr.pem /usr/local/share/ca-certificates/root-yr.crt
 
 RUN cat /usr/local/share/ca-certificates/root-ye.crt >> /etc/ssl/certs/ca-certificates.crt && \
-    cat /usr/local/share/ca-certificates/root-yr.crt >> /etc/ssl/certs/ca-certificates.crt && \
-    apk --no-cache add \
-        curl
+    cat /usr/local/share/ca-certificates/root-yr.crt >> /etc/ssl/certs/ca-certificates.crt
 
-# acme.sh dependencies
-RUN apk add bash
-RUN apk add curl
-RUN apk add openssl
-RUN apk add oath-toolkit-oathtool
-RUN mkdir -p /root/.acme.sh
-
-# timezone support
-RUN apk add --no-cache tzdata
+# acme.sh dependencies (bash, curl, openssl, oathtool) + timezone support (tzdata)
+RUN apk add --no-cache \
+    bash \
+    curl \
+    openssl \
+    oath-toolkit-oathtool \
+    tzdata && \
+    mkdir -p /root/.acme.sh
 
 # copy app
-COPY --from=backend_build /src/certwarden .
-COPY --from=backend_build /src/config.default.yaml .
-COPY --from=backend_build /src/config.example.yaml .
-COPY --from=backend_build /src/config.changelog.md .
-COPY --from=backend_build /src/scripts/linux ./scripts
-COPY --from=frontend_build /src/dist ./frontend_build
-COPY ./README.md .
-COPY ./CHANGELOG.md .
-COPY ./LICENSE.md .
+COPY --from=backend_build  /src/certwarden-backend/_out .
+COPY --from=frontend_build /src/certwarden-frontend/_out .
+COPY --from=root_build     /src/certwarden/_out .
 
 # permissions for scripts (*.sh files only)
 RUN find ./scripts -type f -name "*.sh" -print0 | xargs -0 chmod 755
 
 # make default data folder
-RUN sh -c "mkdir /app/data"
+RUN mkdir -p /app/data
 # defer empty config file generation to Cert Warden on first run (if not manually made by user prior)
 
 # Note: Do not disable http redirect once https is configured or healthcheck will break
-HEALTHCHECK CMD curl --silent --output /dev/null --fail http://localhost:4050/certwarden/api/health || exit 1
+# shorter interval / start period so CI (and `docker run` users) see "healthy" sooner
+HEALTHCHECK --interval=10s --start-period=10s \
+    CMD curl --silent --output /dev/null --fail http://localhost:4050/certwarden/api/health || exit 1
 
 # http / https server
 EXPOSE 4050/tcp 
